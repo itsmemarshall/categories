@@ -4,9 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "express": "^3.21.2",
-    "jquery": "^3.5.1",
-    "socket.io": "^0.9.19"
+    "express": "4.x",
+    "socket.io": "2.3.0"
   },
   "main": "index.js",
   "devDependencies": {},
