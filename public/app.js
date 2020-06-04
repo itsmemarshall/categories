@@ -168,6 +168,7 @@ jQuery(function($){
             App.$templateNewGame = $('#create-game-template').html();
             App.$templateJoinGame = $('#join-game-template').html();
             App.$hostGame = $('#host-game-template').html();
+            App.$homePage = $('#home-page-template').html();
         },
 
         /**
@@ -241,14 +242,14 @@ jQuery(function($){
               // start the timer
                 console.log("clicked start timer")
                 var startTime = 180
-                $("#timer").html(startTime)
+                $("#timeRemaining").html(startTime)
 
                 // Start a 1 second timer
 
                 var timer = setInterval(countItDown, 1000);
                 function countItDown(){
                   startTime -= 1
-                  $("#timer").html(startTime);
+                  $("#timeRemaining").html(startTime);
                   if( startTime <= 0 ){
                     console.log('Countdown Finished.');
                     clearInterval(timer);
@@ -463,7 +464,7 @@ jQuery(function($){
                 console.log('Clicked "Join A Game"');
 
                 // Display the Join Game HTML on the player's screen.
-                App.$gameArea.html(App.$templateJoinGame);
+                App.$gameArea.html(App.$homePage);
             },
 
             /**

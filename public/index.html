@@ -20,16 +20,12 @@
     </div>
 
     <!-- Main Title Screen that appears when the page loads for the first time -->
-    <script id="intro-screen-template" type="text/template">
+    <script id="original-intro-secreen-template" type="text/template">
 
         <div class="titleWrapper">
 
             <div class="title">
-                SCATTEGORIES (ALICE'S BIRTHDAY EDITION)
-
-                <button id='btnStartTimer' value='word'>word</button>
-                <div id="timer"></div>
-                <div id="categories"></div>
+                SCATTEGORIES (ALICE'S BIRTHDAY EDITION) ORIGINAL
             </div>
 
             <div class="buttons">
@@ -40,6 +36,46 @@
             </div>
 
         </div>
+
+    </script>
+
+    <script id="intro-screen-template" type="text/template">
+
+      <div class = "topRow" id = "header">
+        <div class="timer" id="header">
+          <button id='btnStartTimer' value='word'>Start Timer!</button>
+          <div id="timeRemaining"></div>
+         </div>
+        <div class="letter" id="header">
+          a letter should go here
+        </div>
+      </div>
+
+      <div class="body">
+        <div class = "staticList">
+          this is ehre the static list goes
+        </div>
+        <div class = "playerBoard">
+          <div class  = 'playerBoardHeader'>
+              this is where we sum up the totals
+          </div>
+          <div class = 'playerBoardInserts'>
+            <div class = 'round'> round 1 </div>
+            <div class = 'round'> round 2 </div>
+            <div class = 'round'> round 3 </div>
+
+          </div>
+
+         </div>
+      </div>
+
+      <footer>
+        <div class = "bottomRow" id = "header">
+          <div class="leaderboard" id="header">
+            the top 3 guys should go here
+          </div>
+        <<div>
+      </footer>
 
     </script>
 
@@ -57,7 +93,7 @@
         </div>
     </script>
 
-    <!-- This scrreen appears when a player clicks "JOIN" on the Title Screen -->
+    <!-- This screen appears when a player clicks "JOIN" on the Title Screen -->
     <script id="join-game-template" type="text/template">
         <div class="joinGameWrapper">
             <div class="info">
@@ -91,6 +127,7 @@
             </div>
         </div>
     </script>
+
 
     <!-- JavaScript Libraries -->
 
