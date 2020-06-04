@@ -176,12 +176,14 @@ jQuery(function($){
         bindEvents: function () {
             // Host
             App.$doc.on('click', '#btnCreateGame', App.Host.onCreateClick);
+            App.$doc.on('click', '#btnStartTimer', App.Host.onStartTimer);
 
             // Player
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);
             App.$doc.on('click', '.btnAnswer',App.Player.onPlayerAnswerClick);
             App.$doc.on('click', '#btnPlayerRestart', App.Player.onPlayerRestart);
+
         },
 
         /* *************************************
@@ -234,6 +236,29 @@ jQuery(function($){
                 console.log("created game")
             },
 
+            onStartTimer: function() {
+
+              // start the timer
+                console.log("clicked start timer")
+                var startTime = 180
+                $("#timer").html(startTime)
+
+                // Start a 1 second timer
+
+                var timer = setInterval(countItDown, 1000);
+                function countItDown(){
+                  startTime -= 1
+                  $("#timer").html(startTime);
+                  if( startTime <= 0 ){
+                    console.log('Countdown Finished.');
+                    clearInterval(timer);
+                    return;
+                }
+              }
+
+              // generate categories
+            },
+
             /**
              * The Host screen is displayed for the first time.
              * @param data{{ gameId: int, mySocketId: * }}
@@ -284,7 +309,7 @@ jQuery(function($){
                 App.Host.numPlayersInRoom += 1;
 
                 // If two players have joined, start the game!
-                if (App.Host.numPlayersInRoom === 2) {
+                if (App.Host.numPlayersInRoom === 1) {
                     console.log('Room is full. Almost ready!');
 
                     // Let the server know that two players are present.
@@ -303,7 +328,7 @@ jQuery(function($){
 
                 // Begin the on-screen countdown timer
                 var $secondsLeft = $('#hostWord');
-                App.countDown( $secondsLeft, 5, function(){
+                App.countDown( $secondsLeft, 1, function(){
                     IO.socket.emit('hostCountdownFinished', App.gameId);
                 });
 
@@ -533,7 +558,7 @@ jQuery(function($){
                 $.each(data.list, function(){
                     $list                                //  <ul> </ul>
                         .append( $('<li/>')              //  <ul> <li> </li> </ul>
-                            .append( $('<button/>')      //  <ul> <li> <button> </button> </li> </ul>
+                            .append( $('<input>')      //  <ul> <li> <button> </button> </li> </ul>
                                 .addClass('btnAnswer')   //  <ul> <li> <button class='btnAnswer'> </button> </li> </ul>
                                 .addClass('btn')         //  <ul> <li> <button class='btnAnswer'> </button> </li> </ul>
                                 .val(this)               //  <ul> <li> <button class='btnAnswer' value='word'> </button> </li> </ul>
