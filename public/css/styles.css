@@ -1,14 +1,15 @@
 /*
 
- Dark Green : #78BD4C
-  Mid Green : #A8FF56
-       Lite : #ECFFE0
+ light blue : #80bfff
+ peach : #ffcc99
+darker green : #00b386
 Dark Purple : #A22FB0
-
+fuscia: #ff0066
+white: #ECFFE0
 */
 
 html, body {
-    background-color: #78BD4C;
+    background-color: #80bfff;
     height: 100%;
     width: 100%;
     margin: 0;
@@ -27,13 +28,12 @@ html, body {
     height: 100%;
     width: 49%;
     margin-bottom: 0;
-    color: #ECFFE0;
-    font-family: 'Quicksand', sans-serif;
+    color: #00b386;
+    font-family: 'Amatic SC', sans-serif;
     font-weight: 700;
-    font-size: 2em;
-    line-height: 1.2;
+    font-size: 3em;
     text-align: center;
-    background-color: #8AD453;
+    background-color: #ffcc99;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
@@ -83,7 +83,7 @@ html, body {
 }
 
 .titleWrapper {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Amatic SC', sans-serif;
     font-weight: 400;
     position: absolute;
     height: 50%;
@@ -99,8 +99,8 @@ html, body {
     margin: 0px auto;
     text-align: center;
     width: 100%;
-    font-family: 'Quicksand', sans-serif;
-    color: #ECFFE0;
+    font-family: 'Amatic SC', sans-serif;
+    color: #ff0066;
     font-weight: 300;
 }
 
@@ -114,16 +114,26 @@ html, body {
      (create-game-template)
    ****************************** */
 
-.createGameWrapper, .joinGameWrapper, .gameOver {
-    font-family: 'Quicksand', sans-serif;
+.createGameWrapper, .gameOver {
+    font-family: 'Amatic SC', sans-serif;
     margin: 0 auto;
     text-align: center;
+    width: 75%;
+    color: #ff0066;
+    font-weight: 700;
+}
+
+.joinGameWrapper {
+    font-family: 'Amatic SC', sans-serif;
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
 }
 
 .createGameWrapper .info{
     color: #ECFFE0;
     font-weight: 400;
-    font-size: 2em;
+    font-size: 3em;
     margin-top: 1.5em;
 }
 
@@ -134,6 +144,7 @@ html, body {
 
 .info label {
     display: block;
+    font-size: 1.5em;
 }
 
 .info input {
@@ -141,19 +152,26 @@ html, body {
     padding: 10px;
     width: 200px;
     height: 60px;
-    font-family: 'Quicksand', sans-serif;
-    color: #A22FB0;
-    font-weight: 300;
-    font-size: 54px;
-    border: 1px dotted white;
+    font-family: 'Amatic SC', sans-serif;
+    font-weight: 700;
+    border: 3px dotted #ECFFE0;
     border-radius: 10px;
     background: transparent;
+    font-size: 200%;
+    font-weight: 700;
+    color: #ff0066;
 }
 
 .info input#inputPlayerName {
     width: 90%;
+    color: #ff0066;
+    font-size: 200%;
+    font-weight: 700;
 }
 
+.info input#inputGameId {
+    width: 50%;
+}
 
 /* ******************************
            JOIN SCREEN
@@ -168,14 +186,15 @@ html, body {
 }
 
 .joinGameWrapper .info {
-    font-size: 1.5em;
-    color: #ECFFE0;
+    font-size: 2em;
+    color: #A22FB0;
     height: 30%;
     padding-top: 1%;
+    font-weight: 800;
 }
 
 .joinGameWrapper .btn {
-    width: 100%;
+    width: 50%;
     height: 50%;
 }
 
@@ -184,7 +203,7 @@ html, body {
 }
 
 .createGameWrapper #gameURL {
-    font-size: 4em;
+    font-size: 1em;
 }
 
 .createGameWrapper .gameId {
@@ -228,7 +247,7 @@ html, body {
 
 /* Absolute Centering: http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/ */
 #wordArea {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Amatic SC', sans-serif;
     font-weight: 400;
     position: absolute;
     height: 50%;
@@ -248,7 +267,7 @@ html, body {
 #hostWord h2, #btnPlayerRestart h3 {
     font-size: 161px;
     line-height: 1em;
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Amatic SC', sans-serif;
     font-weight: 400;
     margin: 0;
     padding: 0;
@@ -281,7 +300,7 @@ html, body {
 
 .playerScore .score {
     text-align: center;
-    background-color: #A8FF56;
+    background-color: #ffcc99;
 }
 
 .playerScore .playerName {
@@ -317,5 +336,3 @@ html, body {
     position: fixed;
     bottom: 0;
 }
-
-

@@ -517,7 +517,7 @@ jQuery(function($){
             gameCountdown : function(hostData) {
                 App.Player.hostSocketId = hostData.mySocketId;
                 $('#gameArea')
-                    .html('<div class="gameOver">Get Ready!</div>');
+                    .html('<div class="gameOver"><font size = 100000%> Get Ready!</font></div>');
             },
 
             /**
