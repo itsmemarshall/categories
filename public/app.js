@@ -168,6 +168,7 @@ jQuery(function($){
             App.$templateNewGame = $('#create-game-template').html();
             App.$templateJoinGame = $('#join-game-template').html();
             App.$hostGame = $('#host-game-template').html();
+            App.$homePage = $('#home-page-template').html();
         },
 
         /**
@@ -284,7 +285,7 @@ jQuery(function($){
                 App.Host.numPlayersInRoom += 1;
 
                 // If two players have joined, start the game!
-                if (App.Host.numPlayersInRoom === 2) {
+                if (App.Host.numPlayersInRoom === 1) {
                     console.log('Room is full. Almost ready!');
 
                     // Let the server know that two players are present.
@@ -438,7 +439,7 @@ jQuery(function($){
                 console.log('Clicked "Join A Game"');
 
                 // Display the Join Game HTML on the player's screen.
-                App.$gameArea.html(App.$templateJoinGame);
+                App.$gameArea.html(App.$homePage);
             },
 
             /**
