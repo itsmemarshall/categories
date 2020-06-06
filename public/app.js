@@ -65,6 +65,9 @@ jQuery(function($){
             // So on the 'host' browser window, the App.Host.updateWiatingScreen function is called.
             // And on the player's browser, App.Player.updateWaitingScreen is called.
             App[App.myRole].updateWaitingScreen(data);
+
+
+
         },
 
         /**
@@ -119,8 +122,8 @@ jQuery(function($){
         */
         frequentUpdate: function(data) {
           // Update timer
-          let remainingMinutes = Math.floor(data.remainingTime / 60)
-          let remainingSeconds = (data.remainingTime % 60).toString().padStart(2, "0")
+          let remainingMinutes = Math.floor(data.remainingTime / 60);
+          let remainingSeconds = (data.remainingTime % 60).toString().padStart(2, "0");
           $("#timeRemaining").html(`${remainingMinutes}:` + remainingSeconds);
 
           // Update categories
@@ -131,6 +134,14 @@ jQuery(function($){
 
           // Update letters
           $("#letter").html(data.currentLetter)
+
+          // Update players in  rooms
+          $("#leaderboardList").empty()
+          console.log(data.players)
+          for (let player of data.players) {
+            console.log(player.playerName)
+            $("#leaderboardList").append("<li>".concat(player.playerName).concat("</li"))
+          }
 
           // If we are in a round, unlock the current round's text boxes.
           if (data.timerStarted === true) {
@@ -163,19 +174,7 @@ jQuery(function($){
         *
         */
         initGame: function(data) {
-          // Update categories
-          $("#categoryList").empty()
-          for (let j = 0; j < data.categoriesPerRound; j++) {
-            $("#categoryList").append("<li></li>")
-          }
-
-          // Update answer sheets
-          for (let round = 0; round < data.rounds; round++) {
-            $(`#answerSheet${round}`).empty()
-            for (let j = 0; j < data.categoriesPerRound; j++) {
-              $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
-            }
-          }
+          console.log("initGame->start")
 
         }
 
@@ -236,7 +235,7 @@ jQuery(function($){
             App.$templateNewGame = $('#create-game-template').html();
             App.$templateJoinGame = $('#join-game-template').html();
             App.$hostGame = $('#host-game-template').html();
-            App.$homePage = $('#home-page-template').html();
+            App.$templateMainGame = $('#main-game-template').html();
         },
 
         /**
@@ -353,16 +352,16 @@ jQuery(function($){
                 // Update host screen
                 $('#playersWaiting')
                     .append('<p/>')
-                    .text('Player ' + data.playerName + ' joined the game.');
+                    .text('Player ' + data.playerData.playerName + ' joined the game.');
 
                 // Store the new player's data on the Host.
-                App.Host.players.push(data);
+                App.Host.players.push(data.playerData);
 
                 // Increment the number of players in the room
                 App.Host.numPlayersInRoom += 1;
 
                 // If two players have joined, start the game!
-                if (App.Host.numPlayersInRoom === 1) {
+                if (App.Host.numPlayersInRoom === 10) {
                     console.log('Room is full. Almost ready!');
 
                     // Let the server know that two players are present.
@@ -516,7 +515,7 @@ jQuery(function($){
                 console.log('Clicked "Join A Game"');
 
                 // Display the Join Game HTML on the player's screen.
-                App.$gameArea.html(App.$homePage);
+                App.$gameArea.html(App.$templateJoinGame);
             },
 
             /**
@@ -578,13 +577,30 @@ jQuery(function($){
              * @param data
              */
             updateWaitingScreen : function(data) {
-                if(IO.socket.id === data.mySocketId){
+                if(IO.socket.id === data.playerData.mySocketId){
                     App.myRole = 'Player';
-                    App.gameId = data.gameId;
+                    App.gameId = data.playerData.gameId;
 
-                    $('#playerWaitingMessage')
-                        .append('<p/>')
-                        .text('Joined Game ' + data.gameId + '. Please wait for game to begin.');
+                    console.log("PLAYER CONNECTED")
+
+
+                    App.$gameArea.html(App.$templateMainGame);
+                    console.log("GAME AREA SHOWING")
+                    // Update categories
+                    $("#categoryList").empty()
+                    for (let j = 0; j < data.categoriesPerRound; j++) {
+                      $("#categoryList").append("<li></li>")
+                    }
+
+                    console.log("initGame->update ansewr sheets")
+                    // Update answer sheets
+                    for (let round = 0; round < data.rounds; round++) {
+                      $(`#answerSheet${round}`).empty()
+                      for (let j = 0; j < data.categoriesPerRound; j++) {
+                        $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+                      }
+                    }
+
                 }
             },
 

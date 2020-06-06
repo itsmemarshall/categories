@@ -2,16 +2,9 @@ var io;
 var gameSocket;
 
 // Game constants.
-
 var rounds = 3;
 var categoriesPerRound = 12;
 var roundTime = 10;
-
-var remainingTime = JSON.parse(JSON.stringify(roundTime));
-var timerStarted = false
-
-var frequentUpdateTimer;
-
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
   categories[i] = new Array(categoriesPerRound)
@@ -20,9 +13,13 @@ for (i = 0; i < rounds; i++) {
   }
 }
 
+// Global game variables.
 var currentRound = -1
-
 var currentLetter = ""
+var remainingTime = JSON.parse(JSON.stringify(roundTime));
+var timerStarted = false
+var frequentUpdateTimer;
+var players = []
 
 /**
  * This function is called by index.js to initialize a new game instance.
@@ -73,7 +70,8 @@ exports.initGame = function(sio, socket){
           currentRound: currentRound,
           categoriesPerRound: categoriesPerRound,
           timerStarted: timerStarted,
-          currentLetter: currentLetter
+          currentLetter: currentLetter,
+          players: players
         }
       );
       return;
@@ -222,12 +220,13 @@ function playerJoinGame(data) {
 
         //console.log('Player ' + data.playerName + ' joining game: ' + data.gameId );
 
+        players.push(data)
+
         // Emit an event notifying the clients that the player has joined the room.
-        io.sockets.in(data.gameId).emit('playerJoinedRoom', data);
+        io.sockets.in(data.gameId).emit('playerJoinedRoom', {playerData: data, rounds: rounds, categoriesPerRound: categoriesPerRound});
 
     } else {
         // Otherwise, send an error message back to the player.
-        this.emit('error',{message: "This room does not exist."} );
     }
 }
 
