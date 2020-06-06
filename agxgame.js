@@ -1,8 +1,25 @@
 var io;
 var gameSocket;
 
-var rounds = 3
-var categories_per_round = 12
+var rounds = 3;
+var categories_per_round = 12;
+
+var remainingTime = 180;
+var timerStarted = false
+
+var frequentUpdateTimer;
+
+var categories = new Array(rounds)
+for (i = 0; i < rounds; i++) {
+  categories[i] = new Array(categories_per_round)
+  for (j = 0; j < categories_per_round; j++) {
+    categories[i][j] = ""
+  }
+}
+
+var currentRound = -1
+
+var currentLetter = ""
 
 /**
  * This function is called by index.js to initialize a new game instance.
@@ -14,6 +31,12 @@ exports.initGame = function(sio, socket){
     io = sio;
     gameSocket = socket;
     gameSocket.emit('connected', { message: "You are connected!" });
+    sio.sockets.emit("initGame", {
+      categories_per_round: categories_per_round,
+      rounds: rounds
+    })
+    // Timer events
+    gameSocket.on('startTimer', startTimer)
 
     // Host Events
     gameSocket.on('hostCreateNewGame', hostCreateNewGame);
@@ -25,6 +48,61 @@ exports.initGame = function(sio, socket){
     gameSocket.on('playerJoinGame', playerJoinGame);
     gameSocket.on('playerAnswer', playerAnswer);
     gameSocket.on('playerRestart', playerRestart);
+
+    // Update loop
+    if (!frequentUpdateTimer) {
+      frequentUpdateTimer = setInterval(frequentUpdate, 1000)
+      function frequentUpdate() {
+
+        // If the game has started, count down
+        if (timerStarted === true) {
+          if (remainingTime > 0) {
+            remainingTime -= 1
+          } else {
+            // Do a thing when the timer stops!
+          }
+        }
+
+        sio.sockets.emit('frequentUpdate', {
+          remainingTime: remainingTime,
+          categories: categories,
+          rounds: rounds,
+          currentRound: currentRound,
+          categories_per_round: categories_per_round,
+          timerStarted: timerStarted,
+          currentLetter: currentLetter
+        }
+      );
+      return;
+    }
+  }
+}
+
+function startTimer() {
+
+  // Start timer
+  timerStarted = true
+  remainingTime = 180
+  currentRound += 1
+
+  console.log('Game Started.');
+
+  // Generate categories
+  let n_categories = categoryList.length
+
+  let indices = shuffle([...Array(n_categories).keys()])
+
+  for (let i = 0; i < rounds; i++) {
+    for (let j = 0; j < categories_per_round; j++) {
+      categories[i][j] = categoryList[indices[i * j + j]].toLowerCase()
+    }
+  }
+
+  // Pick letter
+
+  currentLetter = letterList[Math.floor(Math.random() * letterList.length)]
+
+
 }
 
 /* *******************************
@@ -246,67 +324,6 @@ function shuffle(array) {
     return array;
 }
 
-/**
- * Each element in the array provides data for a single round in the game.
- *
- * In each round, two random "words" are chosen as the host word and the correct answer.
- * Five random "decoys" are chosen to make up the list displayed to the player.
- * The correct answer is randomly inserted into the list of chosen decoys.
- *
- * @type {Array}
- */
-var wordPool = [
-    {
-        "words"  : [ "sale","seal","ales","leas" ],
-        "decoys" : [ "lead","lamp","seed","eels","lean","cels","lyse","sloe","tels","self" ]
-    },
-
-    {
-        "words"  : [ "item","time","mite","emit" ],
-        "decoys" : [ "neat","team","omit","tame","mate","idem","mile","lime","tire","exit" ]
-    },
-
-    {
-        "words"  : [ "spat","past","pats","taps" ],
-        "decoys" : [ "pots","laps","step","lets","pint","atop","tapa","rapt","swap","yaps" ]
-    },
-
-    {
-        "words"  : [ "nest","sent","nets","tens" ],
-        "decoys" : [ "tend","went","lent","teen","neat","ante","tone","newt","vent","elan" ]
-    },
-
-    {
-        "words"  : [ "pale","leap","plea","peal" ],
-        "decoys" : [ "sale","pail","play","lips","slip","pile","pleb","pled","help","lope" ]
-    },
-
-    {
-        "words"  : [ "races","cares","scare","acres" ],
-        "decoys" : [ "crass","scary","seeds","score","screw","cager","clear","recap","trace","cadre" ]
-    },
-
-    {
-        "words"  : [ "bowel","elbow","below","beowl" ],
-        "decoys" : [ "bowed","bower","robed","probe","roble","bowls","blows","brawl","bylaw","ebola" ]
-    },
-
-    {
-        "words"  : [ "dates","stead","sated","adset" ],
-        "decoys" : [ "seats","diety","seeds","today","sited","dotes","tides","duets","deist","diets" ]
-    },
-
-    {
-        "words"  : [ "spear","parse","reaps","pares" ],
-        "decoys" : [ "ramps","tarps","strep","spore","repos","peris","strap","perms","ropes","super" ]
-    },
-
-    {
-        "words"  : [ "stone","tones","steno","onset" ],
-        "decoys" : [ "snout","tongs","stent","tense","terns","santo","stony","toons","snort","stint" ]
-    }
-]
-
 var categoryList = [
   'A boy’s name',
   'A river',
@@ -419,7 +436,7 @@ var categoryList = [
   'Sports',
   'Song titles',
   'Parts of the body',
-  'Ethnic foods',
+  'Global foods',
   'Things you shout',
   'Birds',
   'A girl’s name',
@@ -531,7 +548,7 @@ var categoryList = [
   'Sweet things',
   'Dental procedures',
   'Perfumes',
-  'Types off candy',
+  'Types of candy',
   'Accessories',
   'Things used by the handicapped',
   'Sounds animals make',
@@ -640,5 +657,9 @@ var categoryList = [
   'Types of exercises',
   'Desserts',
   'Newspapers',
-  'Things found in space',
-]
+  'Things found in space'
+];
+
+var letterList = [
+  'A',	'B',	'C',	'D',	'E',	'F',	'G',	'H',	'I',	'J',	'K',	'L',	'M',	'N',	'O',	'P',	'R',	'S',	'T','W',
+];

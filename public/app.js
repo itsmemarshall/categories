@@ -31,6 +31,8 @@ jQuery(function($){
             IO.socket.on('hostCheckAnswer', IO.hostCheckAnswer);
             IO.socket.on('gameOver', IO.gameOver);
             IO.socket.on('error', IO.error );
+            IO.socket.on('frequentUpdate', IO.frequentUpdate);
+            IO.socket.on('initGame', IO.initGame)
         },
 
         /**
@@ -109,6 +111,57 @@ jQuery(function($){
          */
         error : function(data) {
             alert(data.message);
+        },
+
+        /**
+        * Update client side on update loop.
+        *
+        */
+        frequentUpdate: function(data) {
+          // Update timer
+          $("#timeRemaining").html(data.remainingTime);
+
+          // Update categories
+          $("#categoryList").empty()
+          for (let j = 0; j < data.categories_per_round; j++) {
+            $("#categoryList").append("<li>".concat(data.categories[0][j]).concat("</li>"))
+          }
+
+          // Update letters
+          $("#letter").html(data.currentLetter)
+
+          // Ensure text boxes in rounds done so far are undisabled
+
+          for (let round = 0; round <= data.currentRound; round++) {
+            console.log("un-disabling inputs")
+            $(`#answerSheet${round}`).find("input").each(function() {
+              if(this.hasAttribute("disabled")) {
+                this.removeAttribute("disabled");
+              }
+            })
+          }
+
+        },
+
+        /**
+        * Populate screen.
+        *
+        */
+        initGame: function(data) {
+          // Update categories
+          $("#categoryList").empty()
+          for (let j = 0; j < data.categories_per_round; j++) {
+            $("#categoryList").append("<li></li>")
+          }
+
+          // Update answer sheets
+          for (let round = 0; round < data.rounds; round++) {
+            $(`#answerSheet${round}`).empty()
+            for (let j = 0; j < data.categories_per_round; j++) {
+              $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+            }
+          }
+
         }
 
     };
@@ -197,7 +250,7 @@ jQuery(function($){
          */
         showInitScreen: function() {
             App.$gameArea.html(App.$templateIntroScreen);
-            App.doTextFit('.title');
+            // App.doTextFit('.title');
         },
 
 
@@ -239,23 +292,7 @@ jQuery(function($){
 
             onStartTimer: function() {
 
-              // start the timer
-                console.log("clicked start timer")
-                var startTime = 180
-                $("#timeRemaining").html(startTime)
-
-                // Start a 1 second timer
-
-                var timer = setInterval(countItDown, 1000);
-                function countItDown(){
-                  startTime -= 1
-                  $("#timeRemaining").html(startTime);
-                  if( startTime <= 0 ){
-                    console.log('Countdown Finished.');
-                    clearInterval(timer);
-                    return;
-                }
-              }
+              IO.socket.emit('startTimer');
 
               // generate categories
             },
@@ -619,7 +656,6 @@ jQuery(function($){
 
                 if( startTime <= 0 ){
                     console.log('Countdown Finished.');
-
                     // Stop the timer and do the callback.
                     clearInterval(timer);
                     callback();
