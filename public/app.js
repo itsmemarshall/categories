@@ -123,23 +123,36 @@ jQuery(function($){
 
           // Update categories
           $("#categoryList").empty()
-          for (let j = 0; j < data.categories_per_round; j++) {
+          for (let j = 0; j < data.categoriesPerRound; j++) {
             $("#categoryList").append("<li>".concat(data.categories[0][j]).concat("</li>"))
           }
 
           // Update letters
           $("#letter").html(data.currentLetter)
 
-          // Ensure text boxes in rounds done so far are undisabled
-
-          for (let round = 0; round <= data.currentRound; round++) {
-            console.log("un-disabling inputs")
-            $(`#answerSheet${round}`).find("input").each(function() {
-              if(this.hasAttribute("disabled")) {
-                this.removeAttribute("disabled");
+          // If we are in a round, unlock the current round's text boxes.
+          if (data.timerStarted === true) {
+            console.log("timer has starteD")
+            for (let round = 0; round < data.rounds; round++) {
+              if (round == data.currentRound) {
+                console.log("undisabling current round")
+                console.log(data.currentRound)
+                $(`#answerSheet${round}`).find("input").each(function() {
+                  if(this.hasAttribute("disabled")) {
+                    this.removeAttribute("disabled");
+                  }
+                })
+              } else {
+                console.log("but keep other stuff disabled")
+                $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
               }
-            })
+            }
+          } else {
+            for (let round = 0; round < data.rounds; round++) {
+              $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
+            }
           }
+
 
         },
 
@@ -150,14 +163,14 @@ jQuery(function($){
         initGame: function(data) {
           // Update categories
           $("#categoryList").empty()
-          for (let j = 0; j < data.categories_per_round; j++) {
+          for (let j = 0; j < data.categoriesPerRound; j++) {
             $("#categoryList").append("<li></li>")
           }
 
           // Update answer sheets
           for (let round = 0; round < data.rounds; round++) {
             $(`#answerSheet${round}`).empty()
-            for (let j = 0; j < data.categories_per_round; j++) {
+            for (let j = 0; j < data.categoriesPerRound; j++) {
               $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
             }
           }

@@ -2,17 +2,19 @@ var io;
 var gameSocket;
 
 var rounds = 3;
-var categories_per_round = 12;
+var categoriesPerRound = 12;
 
-var remainingTime = 180;
+var roundTime = 10;
+
+var remainingTime = JSON.parse(JSON.stringify(roundTime));
 var timerStarted = false
 
 var frequentUpdateTimer;
 
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
-  categories[i] = new Array(categories_per_round)
-  for (j = 0; j < categories_per_round; j++) {
+  categories[i] = new Array(categoriesPerRound)
+  for (j = 0; j < categoriesPerRound; j++) {
     categories[i][j] = ""
   }
 }
@@ -32,7 +34,7 @@ exports.initGame = function(sio, socket){
     gameSocket = socket;
     gameSocket.emit('connected', { message: "You are connected!" });
     sio.sockets.emit("initGame", {
-      categories_per_round: categories_per_round,
+      categoriesPerRound: categoriesPerRound,
       rounds: rounds
     })
     // Timer events
@@ -59,7 +61,7 @@ exports.initGame = function(sio, socket){
           if (remainingTime > 0) {
             remainingTime -= 1
           } else {
-            // Do a thing when the timer stops!
+            timerStarted = false
           }
         }
 
@@ -68,7 +70,7 @@ exports.initGame = function(sio, socket){
           categories: categories,
           rounds: rounds,
           currentRound: currentRound,
-          categories_per_round: categories_per_round,
+          categoriesPerRound: categoriesPerRound,
           timerStarted: timerStarted,
           currentLetter: currentLetter
         }
@@ -82,7 +84,7 @@ function startTimer() {
 
   // Start timer
   timerStarted = true
-  remainingTime = 180
+  remainingTime = JSON.parse(JSON.stringify(roundTime));
   currentRound += 1
 
   console.log('Game Started.');
@@ -93,7 +95,7 @@ function startTimer() {
   let indices = shuffle([...Array(n_categories).keys()])
 
   for (let i = 0; i < rounds; i++) {
-    for (let j = 0; j < categories_per_round; j++) {
+    for (let j = 0; j < categoriesPerRound; j++) {
       categories[i][j] = categoryList[indices[i * j + j]].toLowerCase()
     }
   }
@@ -156,15 +158,15 @@ function hostStartGame(gameId) {
     let categories = new Array(rounds)
 
     for (i = 0; i < rounds; i++) {
-      categories[i] = new Array(categories_per_round)
-      for (j = 0; j < categories_per_round; j++) {
+      categories[i] = new Array(categoriesPerRound)
+      for (j = 0; j < categoriesPerRound; j++) {
         categories[i][j] = categoryList[indices[i * j + j]].toLowerCase()
       }
     }
 
     for (i = 0; i < rounds; i++) {
       console.log("ROUND" + i)
-      for (j = 0; j < categories_per_round; j++) {
+      for (j = 0; j < categoriesPerRound; j++) {
         console.log(categories[i][j])
       }
     }
