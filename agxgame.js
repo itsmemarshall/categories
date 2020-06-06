@@ -1,9 +1,10 @@
 var io;
 var gameSocket;
 
+// Game constants.
+
 var rounds = 3;
 var categoriesPerRound = 12;
-
 var roundTime = 10;
 
 var remainingTime = JSON.parse(JSON.stringify(roundTime));
@@ -126,6 +127,7 @@ function hostCreateNewGame() {
     this.emit('newGameCreated', {gameId: thisGameId, mySocketId: this.id});
 
     console.log("hostCreateNewGame called with id = " + this.id)
+
     // Join the Room and wait for the players
     this.join(thisGameId.toString());
 };

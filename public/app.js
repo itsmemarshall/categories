@@ -119,7 +119,9 @@ jQuery(function($){
         */
         frequentUpdate: function(data) {
           // Update timer
-          $("#timeRemaining").html(data.remainingTime);
+          let remainingMinutes = Math.floor(data.remainingTime / 60)
+          let remainingSeconds = (data.remainingTime % 60).toString().padStart(2, "0")
+          $("#timeRemaining").html(`${remainingMinutes}:` + remainingSeconds);
 
           // Update categories
           $("#categoryList").empty()
