@@ -14,10 +14,10 @@ for (i = 0; i < rounds; i++) {
 }
 
 // Global game variables.
+var gameState = "pregame"
 var currentRound = -1
 var currentLetter = ""
 var remainingTime = JSON.parse(JSON.stringify(roundTime));
-var timerStarted = false
 var frequentUpdateTimer;
 var players = []
 
@@ -36,14 +36,10 @@ exports.initGame = function(sio, socket){
       rounds: rounds
     })
 
-    // Timer events
     gameSocket.on('startTimer', startTimer)
-
-    // Host Events
     gameSocket.on('hostCreateNewGame', hostCreateNewGame);
-
-    // Player Events
     gameSocket.on('playerJoinGame', playerJoinGame);
+    gameSocket.on('collectedPlayerResponses', collectedPlayerResponses)
 
     // Update loop
     if (!frequentUpdateTimer) {
@@ -51,11 +47,13 @@ exports.initGame = function(sio, socket){
       function frequentUpdate() {
 
         // If the game has started, count down
-        if (timerStarted === true) {
+        if (gameState === "inRound") {
           if (remainingTime > 0) {
             remainingTime -= 1
           } else {
-            timerStarted = false
+            sio.sockets.emit("roundOver", {
+              currentRound: currentRound
+            })
           }
         }
 
@@ -66,7 +64,7 @@ exports.initGame = function(sio, socket){
           rounds: rounds,
           currentRound: currentRound,
           categoriesPerRound: categoriesPerRound,
-          timerStarted: timerStarted,
+          gameState: gameState,
           currentLetter: currentLetter,
           players: players
         }
@@ -79,7 +77,7 @@ exports.initGame = function(sio, socket){
 function startTimer() {
 
   // Start timer
-  timerStarted = true
+  gameState = "inRound"
   remainingTime = JSON.parse(JSON.stringify(roundTime));
   currentRound += 1
 
@@ -95,6 +93,7 @@ function startTimer() {
   // Pick letter
   currentLetter = letterList[Math.floor(Math.random() * letterList.length)]
 
+  io.sockets.emit("timerStarted", {rounds: rounds, categoriesPerRound: categoriesPerRound})
 
 }
 
@@ -140,7 +139,14 @@ function playerJoinGame(data) {
         // Join the room
         sock.join(data.gameId);
 
-        //console.log('Player ' + data.playerName + ' joining game: ' + data.gameId );
+        // Populate empty player answers.
+        data.answers = new Array(rounds)
+        for (i = 0; i < rounds; i++) {
+          data.answers[i] = new Array(categoriesPerRound)
+          for (j = 0; j < categoriesPerRound; j++) {
+            data.answers[i][j] = ""
+          }
+        }
 
         players.push(data)
 
@@ -150,6 +156,12 @@ function playerJoinGame(data) {
     } else {
         // Otherwise, send an error message back to the player.
     }
+}
+
+function collectedPlayerResponses(data) {
+  let player = players.filter(obj => {return obj.playerName == data.playerName})[0]
+  player.answers[data.currentRound] = data.playerAnswers
+  gameState = "showResults"
 }
 
 /*
