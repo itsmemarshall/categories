@@ -76,6 +76,47 @@
 
     </script>
 
+
+    <!-- This screen appears when a user clicks "CREATE" on the Title Screen -->
+    <script id="round-results-template" type="text/template">
+
+            <div class = "topRow" id = "header">
+              <div class="timer" id="header">
+                <button id='btnStartTimer' value='word'>Start Timer!</button>
+                <div id="timeRemaining"></div>
+               </div>
+              <div id="letter">
+              </div>
+            </div>
+
+            <div class="body">
+              <div id = "categoryListDiv">
+                <ol id = "categoryList"></ol>
+              </div>
+              <div class = "playerBoard">
+                <div class  = 'playerBoardHeader'>
+                    this is where we sum up the totals
+                </div>
+                <div id = 'roundAnswers'>
+                  <div class = 'roundAnswersDiv' id ="myAnswers">
+                    <div id="roundAnswersMyName"></div>
+                    <ol class="roundAnswersList" id="myRoundAnswersList"></ol>
+                  </div>
+                  <div id = "roundAnswersOthers"></div>
+                </div>
+               </div>
+            </div>
+
+            <footer>
+              <div id = "bottomRow">
+                <div id="leaderboard">
+                  <ol id="leaderboardList"></ol>
+                </div>
+              <<div>
+            </footer>
+
+    </script>
+
     <!-- This screen appears when a user clicks "CREATE" on the Title Screen -->
     <script id="create-game-template" type="text/template">
         <div class="createGameWrapper">

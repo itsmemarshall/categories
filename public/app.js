@@ -19,6 +19,8 @@ jQuery(function($){
             IO.socket.on('newGameCreated', IO.onNewGameCreated );
             IO.socket.on('playerJoinedRoom', IO.playerJoinedRoom );
             IO.socket.on('frequentUpdate', IO.frequentUpdate);
+            IO.socket.on('roundOver', IO.roundOver),
+            IO.socket.on('timerStarted', IO.timerStarted)
         },
 
         onConnected : function() {
@@ -34,9 +36,110 @@ jQuery(function($){
 
         },
 
-        onStartTimer: function() {IO.socket.emit('startTimer');},
+        onStartTimer: function() {
+          IO.socket.emit('startTimer');
+        },
+
+        timerStarted: function(data) {
+          App.$gameArea.html(App.$templateMainGame);
+
+          // Update categories
+          $("#categoryList").empty()
+          for (let j = 0; j < data.categoriesPerRound; j++) {
+            $("#categoryList").append("<li></li>")
+          }
+
+          // Update answer sheets
+          for (let round = 0; round < data.rounds; round++) {
+            $(`#answerSheet${round}`).empty()
+            for (let j = 0; j < data.categoriesPerRound; j++) {
+              $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+            }
+
+          }
+        },
+
+        roundOver: function(data) {
+          if (App.myRole === "Player") {
+            let playerAnswers = []
+            $(`#answerSheet${data.currentRound}`).find("input").each(function() {
+              playerAnswers.push($(this).val());
+            })
+            IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
+            App.$gameArea.html(App.$templateRoundResults);
+
+          }
+        },
 
         frequentUpdate: function(data) {
+
+          IO.updateInRoundElements(data);
+
+          //
+          // Before the game starts.
+          //
+
+          if (data.gameState === "pregame") {
+
+            // Keep all text boxes locked.
+            for (let round = 0; round < data.rounds; round++) {
+              $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
+            }
+
+          //
+          // During the round.
+          //
+
+          } else if (data.gameState === "inRound") {
+
+            // Unlock current round's text boxes.
+            for (let round = 0; round < data.rounds; round++) {
+              if (round == data.currentRound) {
+                $(`#answerSheet${round}`).find("input").each(function() {
+                  if(this.hasAttribute("disabled")) {this.removeAttribute("disabled");}
+                })
+              } else { $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")}
+            }
+
+          //
+          // If results are being shown.
+          //
+
+          } else if (data.gameState === "showResults") {
+
+            if (App.myRole === "Player") {
+
+              // Show my answers.
+              let me = IO.findPlayerObject(data.players, App.Player.myName)
+              $("#myRoundAnswersList").empty()
+              $("#roundAnswersMyName").html("my answers")
+              for (let j = 0; j < data.categoriesPerRound; j++) {
+                console.log(me.answers[data.currentRound][j])
+                $("#myRoundAnswersList").append("<li>" + me.answers[data.currentRound][j] + "</li>")
+              }
+              
+              $("#roundAnswersOthers").empty()
+              // Show everyone else's answers.
+              for (let player of data.players) {
+                $("#roundAnswersOthers").append("<div class='roundAnswers' id='" + player.playerName + "Answers'></div>").append("<ol class='roundAnswersList' id= '" + player.playerName + "RoundAnswersList'></ol>")
+                $("#" + player.playerName + "Answers").html(player.playerName)
+                for (let j = 0; j < data.categoriesPerRound; j++) {
+                  $("#" + player.playerName + "RoundAnswersList").append("<li>" + player.answers[data.currentRound][j] + "</li>")
+                }
+              }
+
+            }
+
+          } else {
+
+            console.log("incorrect state")
+
+          }
+
+        },
+
+        updateInRoundElements: function(data) {
+
           // Update timer
           let remainingMinutes = Math.floor(data.remainingTime / 60);
           let remainingSeconds = (data.remainingTime % 60).toString().padStart(2, "0");
@@ -55,35 +158,14 @@ jQuery(function($){
           $("#leaderboardList").empty()
           console.log(data.players)
           for (let player of data.players) {
-            console.log(player.playerName)
             $("#leaderboardList").append("<li>".concat(player.playerName).concat("</li"))
           }
 
-          // If we are in a round, unlock the current round's text boxes.
-          if (data.timerStarted === true) {
-            console.log("timer has starteD")
-            for (let round = 0; round < data.rounds; round++) {
-              if (round == data.currentRound) {
-                console.log("undisabling current round")
-                console.log(data.currentRound)
-                $(`#answerSheet${round}`).find("input").each(function() {
-                  if(this.hasAttribute("disabled")) {
-                    this.removeAttribute("disabled");
-                  }
-                })
-              } else {
-                console.log("but keep other stuff disabled")
-                $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
-              }
-            }
-          } else {
-            for (let round = 0; round < data.rounds; round++) {
-              $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
-            }
-          }
-
-
         },
+
+        findPlayerObject: function(playersList, playerName) {
+          return playersList.filter(obj => {return obj.playerName == playerName})[0]
+        }
 
     };
 
@@ -106,6 +188,8 @@ jQuery(function($){
             App.$templateNewGame = $('#create-game-template').html();
             App.$templateJoinGame = $('#join-game-template').html();
             App.$templateMainGame = $('#main-game-template').html();
+            App.$templateRoundResults = $('#round-results-template').html();
+
         },
 
         bindEvents: function () {
