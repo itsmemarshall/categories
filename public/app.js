@@ -51,6 +51,9 @@ jQuery(function($){
           // Update letters
           $("#letter").html(data.currentLetter)
 
+          // Update playerName
+          $("#playerName").html(App.Player.myName)
+
           // Update players in  rooms
           $("#leaderboardList").empty()
           console.log(data.players)
@@ -105,7 +108,7 @@ jQuery(function($){
             App.$templateIntroScreen = $('#intro-screen-template').html();
             App.$templateNewGame = $('#create-game-template').html();
             App.$templateJoinGame = $('#join-game-template').html();
-            App.$templateMainGame = $('#main-game-template').html();
+            App.$templateMainGame = $('#alice_template').html();
         },
 
         bindEvents: function () {
