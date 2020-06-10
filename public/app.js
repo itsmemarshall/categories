@@ -115,13 +115,13 @@ jQuery(function($){
 
             if (App.myRole === "Player") {
 
-              $("roundAnswersTable").empty()
+              $("#roundAnswersTable").empty()
 
               // Populate categories.
               $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
-              $("#roundAnswersCategoriesRow").append("<td class='rowTitle'>Categories</td>")
+              $("#roundAnswersCategoriesRow").append("<th class='rowTitle'>Categories</td>")
               for (let j = 0; j < data.categoriesPerRound; j++) {
-                $("#roundAnswersCategoriesRow").append("<td>".concat(data.categories[0][j]).concat("</td>"))
+                $("#roundAnswersCategoriesRow").append("<th>".concat(data.categories[0][j]).concat("</td>"))
               }
 
               // Populate point inputs.
