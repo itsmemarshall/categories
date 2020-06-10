@@ -45,13 +45,13 @@ exports.initGame = function(sio, socket){
 
     // Update loop
     if (!frequentUpdateTimer) {
-      frequentUpdateTimer = setInterval(frequentUpdate, 1000)
+      frequentUpdateTimer = setInterval(frequentUpdate, 250)
       function frequentUpdate() {
 
         // If the game has started, count down
         if (gameState === "inRound") {
           if (remainingTime > 0) {
-            remainingTime -= 1
+            remainingTime -= 0.25
           } else {
             sio.sockets.emit("roundOver", {
               currentRound: currentRound

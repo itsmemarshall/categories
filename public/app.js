@@ -86,12 +86,13 @@ jQuery(function($){
           //
 
           if (data.gameState === "pregame") {
+            if (App.Player.inGame) {
+              IO.updateInRoundElements(data, false);
 
-            IO.updateInRoundElements(data);
-
-            // Keep all text boxes locked.
-            for (let round = 0; round < data.rounds; round++) {
-              $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
+              // Keep all text boxes locked.
+              for (let round = 0; round < data.rounds; round++) {
+                $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")
+              }
             }
 
           //
@@ -100,7 +101,7 @@ jQuery(function($){
 
           } else if (data.gameState === "inRound") {
 
-            IO.updateInRoundElements(data);
+            IO.updateInRoundElements(data, true);
 
             // Unlock current round's text boxes.
             for (let round = 0; round < data.rounds; round++) {
@@ -163,17 +164,19 @@ jQuery(function($){
 
         },
 
-        updateInRoundElements: function(data) {
+        updateInRoundElements: function(data, updateCategories) {
 
           // Update timer
           let remainingMinutes = Math.floor(data.remainingTime / 60);
-          let remainingSeconds = (data.remainingTime % 60).toString().padStart(2, "0");
+          let remainingSeconds = Math.ceil(data.remainingTime % 60).toString().padStart(2, "0");
           $("#timeRemaining").html(`${remainingMinutes}:` + remainingSeconds);
 
-          // Update categories
-          $("#categoryList").empty()
-          for (let j = 0; j < data.categoriesPerRound; j++) {
-            $("#categoryList").append("<li>".concat(data.categories[data.currentRound][j]).concat("</li>"))
+          if (updateCategories) {
+            // Update categories
+            $("#categoryList").empty()
+            for (let j = 0; j < data.categoriesPerRound; j++) {
+              $("#categoryList").append("<li>".concat(data.categories[data.currentRound][j]).concat("</li>"))
+            }
           }
 
           // Update letters
@@ -275,6 +278,7 @@ jQuery(function($){
 
             hostSocketId: '',
             myName: '',
+            inGame: false,
             onJoinClick: function () {
                 App.$gameArea.html(App.$templateJoinGame);
             },
@@ -292,6 +296,7 @@ jQuery(function($){
                 // Set the appropriate properties for the current player.
                 App.myRole = 'Player';
                 App.Player.myName = data.playerName;
+                App.Player.inGame = true;
             },
 
             updateWaitingScreen : function(data) {
