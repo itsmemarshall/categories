@@ -1,4 +1,5 @@
-;
+var fadeSpeed = 250;
+
 jQuery(function($){
     'use strict';
 
@@ -21,6 +22,7 @@ jQuery(function($){
             IO.socket.on('frequentUpdate', IO.frequentUpdate);
             IO.socket.on('roundOver', IO.roundOver),
             IO.socket.on('timerStarted', IO.timerStarted)
+            IO.socket.on('gameOver', IO.gameOver)
         },
 
         onConnected : function() {
@@ -44,23 +46,32 @@ jQuery(function($){
           IO.socket.emit('nextCategory');
         },
 
+        gameOver: function () {
+          App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateGameOver)}).fadeIn(fadeSpeed);
+        },
+
         timerStarted: function(data) {
-          App.$gameArea.html(App.$templateMainGame);
+          if (data.currentRound > 0) {
+            App.$gameArea.fadeOut(fadeSpeed, function() {
+              $(this).html(App.$templateMainGame)
 
-          // Update categories
-          $("#categoryList").empty()
-          for (let j = 0; j < data.categoriesPerRound; j++) {
-            $("#categoryList").append("<li></li>")
+              // Update categories
+              $("#categoryList").empty()
+              for (let j = 0; j < data.categoriesPerRound; j++) {
+                $("#categoryList").append("<li></li>")
+              }
+
+              // Update answer sheets
+              for (let round = 0; round < data.rounds; round++) {
+                $(`#answerSheet${round}`).empty()
+                for (let j = 0; j < data.categoriesPerRound; j++) {
+                  $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+                }
+              }
+            }).fadeIn(fadeSpeed);
+
           }
 
-          // Update answer sheets
-          for (let round = 0; round < data.rounds; round++) {
-            $(`#answerSheet${round}`).empty()
-            for (let j = 0; j < data.categoriesPerRound; j++) {
-              $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
-            }
-
-          }
         },
 
         roundOver: function(data) {
@@ -72,14 +83,12 @@ jQuery(function($){
             console.log("roundOver")
             console.log(App.Player.myName)
             IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
-            App.$gameArea.html(App.$templateRoundResults);
+            App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateRoundResults)}).fadeIn(fadeSpeed);
 
           }
         },
 
         frequentUpdate: function(data) {
-
-
 
           //
           // Before the game starts.
@@ -156,6 +165,10 @@ jQuery(function($){
               }
             }
 
+          } else if (data.gameState === "gameOver") {
+
+            console.log("gameOver")
+
           } else {
 
             console.log("incorrect state")
@@ -220,6 +233,7 @@ jQuery(function($){
             App.$templateJoinGame = $('#join-game-template').html();
             App.$templateMainGame = $('#alice_template').html();
             App.$templateRoundResults = $('#round-results-template').html();
+            App.templateGameOver = $('#game-over-template').html();
 
         },
 
@@ -239,8 +253,11 @@ jQuery(function($){
         },
 
         showInitScreen: function() {
-            App.$gameArea.html(App.$templateIntroScreen);
-            App.doTextFit('.title');
+                App.$gameArea.fadeOut(fadeSpeed, function() {
+                  $(this).html(App.$templateIntroScreen);
+                  App.doTextFit('.title');
+                }).fadeIn(fadeSpeed);
+
         },
 
         Host : {
@@ -261,10 +278,13 @@ jQuery(function($){
             },
 
             displayNewGameScreen : function() {
-                App.$gameArea.html(App.$templateNewGame);
-                $('#gameURL').text(window.location.href);
-                App.doTextFit('#gameURL');
-                $('#spanNewGameCode').text(App.gameId);
+                App.$gameArea.fadeOut(fadeSpeed, function() {
+                  $(this).html(App.$templateNewGame)
+                  $('#gameURL').text(window.location.href);
+                  App.doTextFit('#gameURL');
+                  $('#spanNewGameCode').text(App.gameId);
+                }).fadeIn(fadeSpeed)
+
             },
 
             updateWaitingScreen: function(data) {
@@ -280,7 +300,7 @@ jQuery(function($){
             myName: '',
             inGame: false,
             onJoinClick: function () {
-                App.$gameArea.html(App.$templateJoinGame);
+                App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateJoinGame)}).fadeIn(fadeSpeed);
             },
 
             onPlayerStartClick: function() {
@@ -303,22 +323,23 @@ jQuery(function($){
                 if(IO.socket.id === data.playerData.mySocketId){
                     App.myRole = 'Player';
                     App.gameId = data.playerData.gameId;
-                    App.$gameArea.html(App.$templateMainGame);
-
-                    // Update categories
-                    $("#categoryList").empty()
-                    for (let j = 0; j < data.categoriesPerRound; j++) {
-                      $("#categoryList").append("<li></li>")
-                    }
-
-                    // Update answer sheets
-                    for (let round = 0; round < data.rounds; round++) {
-                      $(`#answerSheet${round}`).empty()
+                    App.$gameArea.fadeOut(fadeSpeed, function() {
+                      $(this).html(App.$templateMainGame);
+                      // Update categories
+                      $("#categoryList").empty()
                       for (let j = 0; j < data.categoriesPerRound; j++) {
-                        $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+                        $("#categoryList").append("<li></li>")
                       }
-                    }
 
+                      // Update answer sheets
+                      for (let round = 0; round < data.rounds; round++) {
+                        $(`#answerSheet${round}`).empty()
+                        for (let j = 0; j < data.categoriesPerRound; j++) {
+                          $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+                        }
+                      }
+
+                    }).fadeIn(fadeSpeed);
                 }
             },
         },

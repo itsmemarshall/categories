@@ -4,7 +4,7 @@ var gameSocket;
 // Game constants.
 var rounds = 3;
 var categoriesPerRound = 2;
-var roundTime = 10;
+var roundTime = 2;
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
   categories[i] = new Array(categoriesPerRound)
@@ -47,6 +47,13 @@ exports.initGame = function(sio, socket){
     if (!frequentUpdateTimer) {
       frequentUpdateTimer = setInterval(frequentUpdate, 250)
       function frequentUpdate() {
+        console.log(currentRound)
+        if (currentRound >= rounds && gameState != "gameOver") {
+          gameState = "gameOver"
+          sio.sockets.emit("gameOver", {
+            players: players
+          })
+        }
 
         // If the game has started, count down
         if (gameState === "inRound") {
@@ -97,7 +104,7 @@ function startTimer() {
   // Pick letter
   currentLetter = letterList[Math.floor(Math.random() * letterList.length)]
 
-  io.sockets.emit("timerStarted", {rounds: rounds, categoriesPerRound: categoriesPerRound})
+  io.sockets.emit("timerStarted", {rounds: rounds, categoriesPerRound: categoriesPerRound, currentRound: currentRound})
 
 }
 
