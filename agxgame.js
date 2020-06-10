@@ -159,6 +159,9 @@ function playerJoinGame(data) {
 }
 
 function collectedPlayerResponses(data) {
+  console.log("wtf?")
+  console.log(data.playerName)
+  console.log(players)
   let player = players.filter(obj => {return obj.playerName == data.playerName})[0]
   player.answers[data.currentRound] = data.playerAnswers
   gameState = "showResults"

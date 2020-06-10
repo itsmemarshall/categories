@@ -65,6 +65,8 @@ jQuery(function($){
             $(`#answerSheet${data.currentRound}`).find("input").each(function() {
               playerAnswers.push($(this).val());
             })
+            console.log("roundOver")
+            console.log(App.Player.myName)
             IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
             App.$gameArea.html(App.$templateRoundResults);
 
@@ -113,34 +115,37 @@ jQuery(function($){
 
             if (App.myRole === "Player") {
 
+              $("roundAnswersTable").empty()
+
               // Populate categories.
-              $("#roundAnswersCategoriesRow").empty()
-              $("#roundAnswersCategoriesRow").append("<td>Categories</td>")
+              $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
+              $("#roundAnswersCategoriesRow").append("<td class='rowTitle'>Categories</td>")
               for (let j = 0; j < data.categoriesPerRound; j++) {
                 $("#roundAnswersCategoriesRow").append("<td>".concat(data.categories[0][j]).concat("</td>"))
               }
 
               // Populate point inputs.
-              $("#pointInputsRow").empty()
-              $("#pointInputsRow").append("<td>My Points</td>")
+              $("#roundAnswersTable").append('<tr id="pointInputsRow"></tr>')
+              $("#pointInputsRow").append("<td class='rowTitle'>My Points</td>")
               for (let j = 0; j < data.categoriesPerRound; j++) {
                 $("#pointInputsRow").append("<td><input class='pointInput'></input>")
               }
 
               // Populate my answers.
               let me = IO.findPlayerObject(data.players, App.Player.myName)
-              $("#myAnswersRow").empty()
-              $("#myAnswersRow").append("<td>My Answers</td>")
+              console.log("show results")
+              console.log(App.Player.myName)
+              $("#roundAnswersTable").append('<tr id="myAnswersRow"></tr>')
+              $("#myAnswersRow").append("<td class='rowTitle'>My Answers</td>")
               for (let j = 0; j < data.categoriesPerRound; j++) {
                 $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][j] + "</td>")
               }
 
               // Populate others' answers.
-              $("#othersAnswersTable").empty()
-              // Show everyone else's answers.
+
               for (let player of data.players) {
-                $("#othersAnswersTable").append("<tr class='othersAnswersRow' id='" + player.playerName + "AnswersRow'></tr>")
-                $("#" + player.playerName + "AnswersRow").append("<td>" + player.playerName + "</td>")
+                $("#roundAnswersTable").append("<tr class='othersAnswersRow' id='" + player.playerName + "AnswersRow'></tr>")
+                $("#" + player.playerName + "AnswersRow").append("<td class='rowTitle'>" + player.playerName + "</td>")
                 for (let j = 0; j < data.categoriesPerRound; j++) {
                   $("#" + player.playerName + "AnswersRow").append("<td>" + player.answers[data.currentRound][j] + "</td>")
                 }
