@@ -40,6 +40,10 @@ jQuery(function($){
           IO.socket.emit('startTimer');
         },
 
+        onNextCategory: function() {
+          IO.socket.emit('nextCategory');
+        },
+
         timerStarted: function(data) {
           App.$gameArea.html(App.$templateMainGame);
 
@@ -116,39 +120,38 @@ jQuery(function($){
             if (App.myRole === "Player") {
 
               $("#roundAnswersTable").empty()
+              $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
+              $("#roundResultsCategoryN").html(`Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
 
-              // Populate categories.
-              $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
-              $("#roundAnswersCategoriesRow").append("<th class='rowTitle'>Categories</td>")
-              for (let j = 0; j < data.categoriesPerRound; j++) {
-                $("#roundAnswersCategoriesRow").append("<th>".concat(data.categories[0][j]).concat("</td>"))
+              if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
+                $("#roundResultsButtonHolder").empty()
+                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+              } else {
+                $("#roundResultsButtonHolder").empty()
+                $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
               }
+
+              // Populate current category.
+              $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
+              $("#roundAnswersCategoriesRow").append("<td class='rowTitle'>Category</td>")
+              $("#roundAnswersCategoriesRow").append("<td>".concat(data.categories[data.currentRound][data.showingResultsForCategoryN]).concat("</td>"))
 
               // Populate point inputs.
               $("#roundAnswersTable").append('<tr id="pointInputsRow"></tr>')
               $("#pointInputsRow").append("<td class='rowTitle'>My Points</td>")
-              for (let j = 0; j < data.categoriesPerRound; j++) {
-                $("#pointInputsRow").append("<td><input class='pointInput'></input>")
-              }
+              $("#pointInputsRow").append("<td><input class='pointInput'></input>")
 
               // Populate my answers.
               let me = IO.findPlayerObject(data.players, App.Player.myName)
-              console.log("show results")
-              console.log(App.Player.myName)
               $("#roundAnswersTable").append('<tr id="myAnswersRow"></tr>')
               $("#myAnswersRow").append("<td class='rowTitle'>My Answers</td>")
-              for (let j = 0; j < data.categoriesPerRound; j++) {
-                $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][j] + "</td>")
-              }
+              $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
 
               // Populate others' answers.
-
               for (let player of data.players) {
                 $("#roundAnswersTable").append("<tr class='othersAnswersRow' id='" + player.playerName + "AnswersRow'></tr>")
                 $("#" + player.playerName + "AnswersRow").append("<td class='rowTitle'>" + player.playerName + "</td>")
-                for (let j = 0; j < data.categoriesPerRound; j++) {
-                  $("#" + player.playerName + "AnswersRow").append("<td>" + player.answers[data.currentRound][j] + "</td>")
-                }
+                $("#" + player.playerName + "AnswersRow").append("<td>" + player.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
               }
             }
 
@@ -170,7 +173,7 @@ jQuery(function($){
           // Update categories
           $("#categoryList").empty()
           for (let j = 0; j < data.categoriesPerRound; j++) {
-            $("#categoryList").append("<li>".concat(data.categories[0][j]).concat("</li>"))
+            $("#categoryList").append("<li>".concat(data.categories[data.currentRound][j]).concat("</li>"))
           }
 
           // Update letters
@@ -219,9 +222,16 @@ jQuery(function($){
 
         bindEvents: function () {
             App.$doc.on('click', '#btnStartTimer', IO.onStartTimer);
+            App.$doc.on('click', '#btnNextCategory', IO.onNextCategory);
+            App.$doc.on('click', '#btnNextRound', IO.onStartTimer);
             App.$doc.on('click', '#btnCreateGame', App.Host.onCreateClick);
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);
+            App.$doc.keyup(function(event) {
+              if (event.keyCode == 13) {
+                $("btnStart").click();
+              }
+            })
 
         },
 
