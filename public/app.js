@@ -121,7 +121,7 @@ jQuery(function($){
 
               $("#roundAnswersTable").empty()
               $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
-              $("#roundResultsCategoryN").html(`Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
+              $("#roundResultsCategoryN").html(`Evaluating Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
 
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
@@ -133,8 +133,8 @@ jQuery(function($){
 
               // Populate current category.
               $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
-              $("#roundAnswersCategoriesRow").append("<td class='rowTitle'>Category</td>")
-              $("#roundAnswersCategoriesRow").append("<td>".concat(data.categories[data.currentRound][data.showingResultsForCategoryN]).concat("</td>"))
+              $("#roundAnswersCategoriesRow").append("<th class='rowTitle'>Category</td>")
+              $("#roundAnswersCategoriesRow").append("<th>".concat(data.categories[data.currentRound][data.showingResultsForCategoryN]).concat("</td>"))
 
               // Populate point inputs.
               $("#roundAnswersTable").append('<tr id="pointInputsRow"></tr>')

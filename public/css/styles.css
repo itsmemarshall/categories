@@ -44,6 +44,12 @@ html, body {
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
+    font-family: 'Amatic SC', sans-serif;
+}
+
+#btnCreateGame #btnJoinGame{
+font-family: 'Amatic SC', sans-serif;
+
 }
 
 .btn:focus {
@@ -210,3 +216,32 @@ html, body {
            EVALUATION SCREEN
       (round-results--template)
    ****************************** */
+h6 {
+font-family: 'Amatic SC', sans-serif;
+color: #ff0066;
+text-align: center;
+font-size: 125%;
+
+}
+
+
+th {
+  background-color: #ffcc99;
+  color: #000000;
+}
+
+#myAnswersRow {
+  background-color: ;
+  border: 1px solid black;
+}
+
+.rowTitle {
+  color: #ff0066;
+  font-size: 110%;
+  font-style: normal;
+}
+
+td {
+  font-size: 110%;
+  font-style: italic;
+}
