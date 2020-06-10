@@ -3,7 +3,7 @@ var gameSocket;
 
 // Game constants.
 var rounds = 3;
-var categoriesPerRound = 12;
+var categoriesPerRound = 2;
 var roundTime = 10;
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
@@ -20,6 +20,7 @@ var currentLetter = ""
 var remainingTime = JSON.parse(JSON.stringify(roundTime));
 var frequentUpdateTimer;
 var players = []
+var showingResultsForCategoryN = 0
 
 /**
  * This function is called by index.js to initialize a new game instance.
@@ -37,6 +38,7 @@ exports.initGame = function(sio, socket){
     })
 
     gameSocket.on('startTimer', startTimer)
+    gameSocket.on('nextCategory', nextCategory)
     gameSocket.on('hostCreateNewGame', hostCreateNewGame);
     gameSocket.on('playerJoinGame', playerJoinGame);
     gameSocket.on('collectedPlayerResponses', collectedPlayerResponses)
@@ -66,7 +68,8 @@ exports.initGame = function(sio, socket){
           categoriesPerRound: categoriesPerRound,
           gameState: gameState,
           currentLetter: currentLetter,
-          players: players
+          players: players,
+          showingResultsForCategoryN: showingResultsForCategoryN
         }
       );
       return;
@@ -80,6 +83,7 @@ function startTimer() {
   gameState = "inRound"
   remainingTime = JSON.parse(JSON.stringify(roundTime));
   currentRound += 1
+  showingResultsForCategoryN = 0
 
   // Generate categories
   let n_categories = categoryList.length
@@ -94,6 +98,12 @@ function startTimer() {
   currentLetter = letterList[Math.floor(Math.random() * letterList.length)]
 
   io.sockets.emit("timerStarted", {rounds: rounds, categoriesPerRound: categoriesPerRound})
+
+}
+
+function nextCategory() {
+
+  showingResultsForCategoryN += 1
 
 }
 
@@ -243,7 +253,7 @@ var categoryList = [
   'Parts of the body',
   'Sandwiches',
   'Items in a catalog',
-  'World leaders/Poloticians',
+  'World leaders',
   'School subjects',
   'Excuses for being late',
   'Ice cream flavors',
@@ -251,12 +261,12 @@ var categoryList = [
   'Television stars',
   'Things in a park',
   'Foriegn cities',
-  'Stones/Gems',
+  'Gems',
   'Musical instruments',
   'Nicknames',
   'Things in the sky',
   'Pizza toppings',
-  'Colleges/Universities',
+  'Colleges',
   'Fish',
   'Countries',
   'Things that have spots',
@@ -278,14 +288,14 @@ var categoryList = [
   'Sports equiptment',
   'Crimes',
   'Things that are sticky',
-  'Awards/ceremonies',
+  'Awards',
   'Cars',
-  'Spices/Herbs',
+  'Spices and herbs',
   'Bad habits',
-  'Cosmetics/Toiletries',
+  'Cosmetics or toiletries',
   'Celebrities',
   'Cooking utensils',
-  'Reptiles/Amphibians',
+  'Reptiles',
   'Parks',
   'Leisure activities',
   'Things people are allergic to',
