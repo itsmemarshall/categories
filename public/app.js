@@ -23,6 +23,8 @@ jQuery(function($){
             IO.socket.on('roundOver', IO.roundOver),
             IO.socket.on('timerStarted', IO.timerStarted)
             IO.socket.on('gameOver', IO.gameOver)
+            IO.socket.on('updatedNextCategory', IO.updateResultsPage)
+            IO.socket.on('collectPlayerPoints', IO.collectPlayerPoints)
         },
 
         onConnected : function() {
@@ -43,7 +45,18 @@ jQuery(function($){
         },
 
         onNextCategory: function() {
-          IO.socket.emit('nextCategory');
+
+          IO.socket.emit("nextCategoryButtonClicked")
+
+        },
+
+        collectPlayerPoints: function() {
+
+          if (App.myRole === "Player") {
+
+            let myPoints = parseInt($("#myPointsInput").val())
+            IO.socket.emit('collectedPlayerPoints', {playerName: App.Player.myName, myPoints: myPoints});
+          }
         },
 
         gameOver: function () {
@@ -83,7 +96,12 @@ jQuery(function($){
             console.log("roundOver")
             console.log(App.Player.myName)
             IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
-            App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateRoundResults)}).fadeIn(fadeSpeed);
+            App.$gameArea.fadeOut(fadeSpeed, function() {
+              $(this).html(App.$templateRoundResults);
+              console.log("initla roundOveR")
+              console.log(data.showingResultsForCategoryN)
+              IO.updateResultsPage(data);
+            }).fadeIn(fadeSpeed);
 
           }
         },
@@ -127,43 +145,7 @@ jQuery(function($){
 
           } else if (data.gameState === "showResults") {
 
-            if (App.myRole === "Player") {
-
-              $("#roundAnswersTable").empty()
-              $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
-              $("#roundResultsCategoryN").html(`Evaluating Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
-
-              if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
-                $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
-              } else {
-                $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
-              }
-
-              // Populate current category.
-              $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
-              $("#roundAnswersCategoriesRow").append("<th class='rowTitle'>Category</td>")
-              $("#roundAnswersCategoriesRow").append("<th>".concat(data.categories[data.currentRound][data.showingResultsForCategoryN]).concat("</td>"))
-
-              // Populate point inputs.
-              $("#roundAnswersTable").append('<tr id="pointInputsRow"></tr>')
-              $("#pointInputsRow").append("<td class='rowTitle'>My Points</td>")
-              $("#pointInputsRow").append("<td><input class='pointInput'></input>")
-
-              // Populate my answers.
-              let me = IO.findPlayerObject(data.players, App.Player.myName)
-              $("#roundAnswersTable").append('<tr id="myAnswersRow"></tr>')
-              $("#myAnswersRow").append("<td class='rowTitle'>My Answers</td>")
-              $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
-
-              // Populate others' answers.
-              for (let player of data.players) {
-                $("#roundAnswersTable").append("<tr class='othersAnswersRow' id='" + player.playerName + "AnswersRow'></tr>")
-                $("#" + player.playerName + "AnswersRow").append("<td class='rowTitle'>" + player.playerName + "</td>")
-                $("#" + player.playerName + "AnswersRow").append("<td>" + player.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
-              }
-            }
+            IO.updateInRoundElements(data, false)
 
           } else if (data.gameState === "gameOver") {
 
@@ -200,11 +182,76 @@ jQuery(function($){
 
           // Update players in  rooms
           $("#leaderboardList").empty()
-          console.log(data.players)
-          for (let player of data.players) {
-            $("#leaderboardList").append("<li>".concat(player.playerName).concat("</li"))
+          for (let element of IO.generateSortedLeaderboard(data)) {
+            $("#leaderboardList").append("<li>".concat(element[0]).concat(` (${element[1]})</li`))
           }
 
+        },
+
+        generateSortedLeaderboard: function(data) {
+          let pointsArray = []
+          let playerArray = []
+          for (let player of data.players) {
+            let totalPoints = player.points.flat().reduce((accumulator,currentValue)=>accumulator+currentValue)
+            pointsArray.push(totalPoints)
+            playerArray.push([player.playerName, totalPoints])
+          }
+          let result = []
+          console.log(playerArray)
+          pointsArray.sort().reverse()
+          pointsArray.forEach(function(key) {
+            var found = false;
+            playerArray = playerArray.filter(function(item) {
+                if(!found && item[1] == key) {
+                    result.push(item);
+                    found = true;
+                    return false;
+                } else
+                    return true;
+            })
+          })
+          return result
+        },
+
+        updateResultsPage: function(data) {
+
+          if (App.myRole === "Player") {
+
+            $("#roundAnswersTable").empty()
+            $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
+            $("#roundResultsCategoryN").html(`Evaluating Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
+
+            if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
+              $("#roundResultsButtonHolder").empty()
+              $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+            } else {
+              $("#roundResultsButtonHolder").empty()
+              $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
+            }
+
+            // Populate current category.
+            $("#roundAnswersTable").append('<tr id="roundAnswersCategoriesRow"></tr>')
+            $("#roundAnswersCategoriesRow").append("<th class='rowTitle'>Category</td>")
+            $("#roundAnswersCategoriesRow").append("<th>".concat(data.categories[data.currentRound][data.showingResultsForCategoryN]).concat("</td>"))
+
+            // Populate point inputs.
+            $("#roundAnswersTable").append('<tr id="pointInputsRow"></tr>')
+            $("#pointInputsRow").append("<td class='rowTitle'>My Points</td>")
+            $("#pointInputsRow").append("<td><input class='pointInput' id='myPointsInput'></input>")
+
+            // Populate my answers.
+            let me = IO.findPlayerObject(data.players, App.Player.myName)
+            $("#roundAnswersTable").append('<tr id="myAnswersRow"></tr>')
+            $("#myAnswersRow").append("<td class='rowTitle'>My Answers</td>")
+            $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
+
+            // Populate others' answers.
+            for (let player of data.players) {
+              $("#roundAnswersTable").append("<tr class='othersAnswersRow' id='" + player.playerName + "AnswersRow'></tr>")
+              $("#" + player.playerName + "AnswersRow").append("<td class='rowTitle'>" + player.playerName + "</td>")
+              $("#" + player.playerName + "AnswersRow").append("<td>" + player.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
+            }
+          }
         },
 
         findPlayerObject: function(playersList, playerName) {
@@ -240,7 +287,10 @@ jQuery(function($){
         bindEvents: function () {
             App.$doc.on('click', '#btnStartTimer', IO.onStartTimer);
             App.$doc.on('click', '#btnNextCategory', IO.onNextCategory);
-            App.$doc.on('click', '#btnNextRound', IO.onStartTimer);
+            App.$doc.on('click', '#btnNextRound', function() {
+              IO.onNextCategory();
+              IO.onStartTimer();
+            })
             App.$doc.on('click', '#btnCreateGame', App.Host.onCreateClick);
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);

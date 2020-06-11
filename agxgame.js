@@ -3,8 +3,8 @@ var gameSocket;
 
 // Game constants.
 var rounds = 3;
-var categoriesPerRound = 2;
-var roundTime = 2;
+var categoriesPerRound = 4;
+var roundTime = 5;
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
   categories[i] = new Array(categoriesPerRound)
@@ -38,16 +38,16 @@ exports.initGame = function(sio, socket){
     })
 
     gameSocket.on('startTimer', startTimer)
-    gameSocket.on('nextCategory', nextCategory)
+    gameSocket.on('nextCategoryButtonClicked', nextCategory)
     gameSocket.on('hostCreateNewGame', hostCreateNewGame);
     gameSocket.on('playerJoinGame', playerJoinGame);
     gameSocket.on('collectedPlayerResponses', collectedPlayerResponses)
+    gameSocket.on('collectedPlayerPoints', collectedPlayerPoints)
 
     // Update loop
     if (!frequentUpdateTimer) {
       frequentUpdateTimer = setInterval(frequentUpdate, 250)
       function frequentUpdate() {
-        console.log(currentRound)
         if (currentRound >= rounds && gameState != "gameOver") {
           gameState = "gameOver"
           sio.sockets.emit("gameOver", {
@@ -61,7 +61,12 @@ exports.initGame = function(sio, socket){
             remainingTime -= 0.25
           } else {
             sio.sockets.emit("roundOver", {
-              currentRound: currentRound
+              currentRound: currentRound,
+              categories: categories,
+              showingResultsForCategoryN: showingResultsForCategoryN,
+              players: players,
+              categoriesPerRound: categoriesPerRound
+
             })
           }
         }
@@ -108,10 +113,21 @@ function startTimer() {
 
 }
 
-function nextCategory() {
+function nextCategory(data) {
+
+  io.sockets.emit("collectPlayerPoints")
 
   showingResultsForCategoryN += 1
+  console.log(players)
+  console.log(players[0].points)
+  console.log(players[1].points)
+  io.sockets.emit("updatedNextCategory", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound})
 
+}
+
+function collectedPlayerPoints(data) {
+  let player = players.filter(obj => {return obj.playerName == data.playerName})[0]
+  player.points[currentRound][showingResultsForCategoryN] = data.myPoints
 }
 
 function hostCreateNewGame() {
@@ -158,10 +174,13 @@ function playerJoinGame(data) {
 
         // Populate empty player answers.
         data.answers = new Array(rounds)
+        data.points = new Array(rounds)
         for (i = 0; i < rounds; i++) {
           data.answers[i] = new Array(categoriesPerRound)
+          data.points[i] = new Array(categoriesPerRound)
           for (j = 0; j < categoriesPerRound; j++) {
             data.answers[i][j] = ""
+            data.points[i][j] = 0
           }
         }
 
@@ -176,9 +195,7 @@ function playerJoinGame(data) {
 }
 
 function collectedPlayerResponses(data) {
-  console.log("wtf?")
-  console.log(data.playerName)
-  console.log(players)
+
   let player = players.filter(obj => {return obj.playerName == data.playerName})[0]
   player.answers[data.currentRound] = data.playerAnswers
   gameState = "showResults"
