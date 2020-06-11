@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- Let's borrow a cool looking Font from Google -->
-    <link href='https://fonts.googleapis.com/css?family=Amatic SC' rel='stylesheet' type='text/css'>
-
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Gloria+Hallelujah&display=swap" rel="stylesheet" type='text/css'>
     <link href="css/styles.css" rel="stylesheet">
 </head>
 
@@ -62,15 +61,15 @@
        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
         <a class="w3-bar-item w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
         <a class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fa fa-birthday-cake"></i> SCATTEGORIES </a>
-        <a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"><i class="fa fa-hourglass"></i>
+        <a class="w3-bar-item w3-button w3-hover-white"><i class="fa fa-hourglass"></i>
           <button id='btnStartTimer' value='word'>Start Timer!</button>
         </a>
-        <a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id = 'timeRemaining'></a>
-        <a class="w3-bar-item w3-hide-small w3-padding-large"><i class="fa fa-exclamation-circle"></i> Letter Chosen: </a>
-        <a class="w3-bar-item w3-hide-small w3-padding-large" id = 'letter'></a>
+        <a class="w3-bar-item w3-button w3-padding-large w3-hover-white" id = 'timeRemaining'></a>
+        <a class="w3-bar-item w3-padding-large"><i class="fa fa-exclamation-circle"></i> Letter Chosen: </a>
+        <a class="w3-bar-item" id = 'letter'></a>
 
-        <a class="w3-bar-item w3-hide-small w3-right w3-padding-large"><i class="fa fa-user"></i>
-          <a class="w3-bar-item w3-hide-small w3-right w3-padding-large" id = 'playerName'></a>
+        <a class="w3-bar-item w3-right w3-padding-large"><i class="fa fa-user"></i>
+          <a class="w3-bar-item w3-right w3-padding-large" id = 'playerName'></a>
         </a>
        </div>
       </div>
@@ -149,7 +148,7 @@
       </div>
       <br>
 
-      <footer class="w3-container w3-theme-d3 w3-padding-16", style = "position: fixed; bottom:0; width: 100%">
+      <footer class="w3-container w3-theme-d3 w3-padding-16", style = "position: fixed; bottom:0; width: 100%; text-align: center">
         <h5>THANKS FOR PLAYING WITH US!</h5>
         <i class="fa fa-birthday-cake"></i>
           remember to wish Alice a happy  27th birthday
@@ -165,6 +164,7 @@
       <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
       <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Amatic SC'>
+      <link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
@@ -181,12 +181,12 @@
        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
         <a class="w3-bar-item w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
         <a class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fa fa-birthday-cake"></i> SCATTEGORIES </a>
-        <a class="w3-bar-item w3-hide-small w3-padding-large"><i class="fa fa-exclamation-circle"></i> Letter Chosen: </a>
-        <a class="w3-bar-item w3-hide-small w3-padding-large" id = 'letter'></a>
-        <a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="currentRoundShower"></a>
+        <a class="w3-bar-item w3-padding-large"><i class="fa fa-exclamation-circle"></i> Letter Chosen: </a>
+        <a class="w3-bar-item" id = 'letter'></a>
+        <a class="w3-bar-item w3-padding-large" id="currentRoundShower"></a>
 
-        <a class="w3-bar-item w3-hide-small w3-right w3-padding-large"><i class="fa fa-user"></i>
-          <a class="w3-bar-item w3-hide-small w3-right w3-padding-large" id = 'playerName'></a>
+        <a class="w3-bar-item w3-right w3-padding-large"><i class="fa fa-user"></i>
+          <a class="w3-bar-item w3-right w3-padding-large" id = 'playerName'></a>
         </a>
        </div>
       </div>
@@ -265,8 +265,8 @@
       </div>
       <br>
 
-      <footer class="w3-container w3-theme-d3 w3-padding-16" style = "position: fixed; bottom:0; width: 100%">
-        <h5>THANKS FOR PLAYING WITH US!</h5>
+      <footer class="w3-container w3-theme-d3 w3-padding-16" style = "position: fixed; bottom:0; width: 100%; text-align: center">
+        <h5 >THANKS FOR PLAYING WITH US!</h5>
         <i class="fa fa-birthday-cake"></i>
           remember to wish Alice a happy  27th birthday
           <i class="fa fa-birthday-cake"></i>
@@ -340,10 +340,12 @@
         <div class="joinGameWrapper">
             <div class="info">
                 <label for="inputPlayerName">Your Name:</label>
+                <br>
                 <input id="inputPlayerName" type="text" />
             </div>
 
             <div class="info buttons">
+              <br>
                 <button id="btnStart" class="btn">Start</button>
                 <div id="playerWaitingMessage"></div>
             </div>
