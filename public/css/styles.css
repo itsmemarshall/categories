@@ -232,13 +232,29 @@ th {
 
 #myAnswersRow {
   background-color: ;
-  border: 1px solid black;
+  border: 2px solid #ffcc99;
 }
 
 .rowTitle {
   color: #ff0066;
   font-size: 110%;
   font-style: normal;
+}
+
+#letter {
+  font-size: 100%;
+  color: #80bfff;
+  font-weight: bold;
+  font-family: 'Gloria Hallelujah', sans-serif;
+  padding-top: 12px;
+  padding-right: 0px;
+  padding-bottom: 12px;
+  padding-left: 0px;
+}
+
+#inputPlayerName{
+  font-family: 'Amatic SC', sans-serif;
+  padding-top: 12px;
 }
 
 td {

@@ -219,7 +219,7 @@ jQuery(function($){
 
             $("#roundAnswersTable").empty()
             $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
-            $("#roundResultsCategoryN").html(`Evaluating Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
+            $("#roundResultsCategoryN").html(`Comparing Answers for Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
 
             if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
               $("#roundResultsButtonHolder").empty()
