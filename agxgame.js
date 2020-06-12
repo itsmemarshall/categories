@@ -2,7 +2,7 @@ var io;
 var gameSocket;
 
 // Game constants.
-var rounds = 3;
+var rounds = 1;
 var categoriesPerRound = 4;
 var roundTime = 5;
 var categories = new Array(rounds)
@@ -43,17 +43,12 @@ exports.initGame = function(sio, socket){
     gameSocket.on('playerJoinGame', playerJoinGame);
     gameSocket.on('collectedPlayerResponses', collectedPlayerResponses)
     gameSocket.on('collectedPlayerPoints', collectedPlayerPoints)
+    gameSocket.on('gameOver', gameOver)
 
     // Update loop
     if (!frequentUpdateTimer) {
       frequentUpdateTimer = setInterval(frequentUpdate, 250)
       function frequentUpdate() {
-        if (currentRound >= rounds && gameState != "gameOver") {
-          gameState = "gameOver"
-          sio.sockets.emit("gameOver", {
-            players: players
-          })
-        }
 
         // If the game has started, count down
         if (gameState === "inRound") {
@@ -66,8 +61,8 @@ exports.initGame = function(sio, socket){
               showingResultsForCategoryN: showingResultsForCategoryN,
               players: players,
               categoriesPerRound: categoriesPerRound
-
             })
+            setTimeout(function() {sio.sockets.emit("updatedPlayerResponses", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound})}, 500);
           }
         }
 
@@ -118,10 +113,7 @@ function nextCategory(data) {
   io.sockets.emit("collectPlayerPoints")
 
   showingResultsForCategoryN += 1
-  console.log(players)
-  console.log(players[0].points)
-  console.log(players[1].points)
-  io.sockets.emit("updatedNextCategory", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound})
+  io.sockets.emit("updatedNextCategory", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound, rounds: rounds})
 
 }
 
@@ -140,6 +132,10 @@ function hostCreateNewGame() {
     // Join the Room and wait for the players
     this.join(thisGameId.toString());
 };
+
+function gameOver() {
+  gameState = "gameOver"
+}
 
 /* *****************************
    *                           *

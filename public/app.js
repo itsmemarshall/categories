@@ -1,4 +1,5 @@
 var fadeSpeed = 250;
+var currentPage = "login"
 
 jQuery(function($){
     'use strict';
@@ -25,6 +26,7 @@ jQuery(function($){
             IO.socket.on('gameOver', IO.gameOver)
             IO.socket.on('updatedNextCategory', IO.updateResultsPage)
             IO.socket.on('collectPlayerPoints', IO.collectPlayerPoints)
+            IO.socket.on("updatedPlayerResponses", IO.updatedPlayerResponses)
         },
 
         onConnected : function() {
@@ -54,19 +56,24 @@ jQuery(function($){
 
           if (App.myRole === "Player") {
 
-            let myPoints = parseInt($("#myPointsInput").val())
+            let myPoints = parseInt($("#myPointsInput").val()) || 0;
             IO.socket.emit('collectedPlayerPoints', {playerName: App.Player.myName, myPoints: myPoints});
           }
         },
 
         gameOver: function () {
-          App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateGameOver)}).fadeIn(fadeSpeed);
+          if (App.myRole === "Player") {
+            console.log("gameover!")
+            IO.socket.emit("gameOver")
+            App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateGameOver)}).fadeIn(fadeSpeed);
+          }
         },
 
         timerStarted: function(data) {
           if (data.currentRound > 0) {
             App.$gameArea.fadeOut(fadeSpeed, function() {
               $(this).html(App.$templateMainGame)
+              currentPage = "mainPage"
 
               // Update categories
               $("#categoryList").empty()
@@ -93,15 +100,27 @@ jQuery(function($){
             $(`#answerSheet${data.currentRound}`).find("input").each(function() {
               playerAnswers.push($(this).val());
             })
-            console.log("roundOver")
+            console.log("justBeforeCollectedPlayerREsponses")
             console.log(App.Player.myName)
             IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
+          }
+        },
+
+        updatedPlayerResponses: function(data) {
+          if (App.myRole === "Player") {
+            console.log("pre Fade Out" + App.Player.myName)
+            currentPage = "roundResults"
+            console.log("in fade out, before new tempalte")
             App.$gameArea.fadeOut(fadeSpeed, function() {
               $(this).html(App.$templateRoundResults);
-              console.log("initla roundOveR")
-              console.log(data.showingResultsForCategoryN)
+              console.log("new template")
               IO.updateResultsPage(data);
+              console.log("updated page")
             }).fadeIn(fadeSpeed);
+
+            //
+
+
 
           }
         },
@@ -183,7 +202,7 @@ jQuery(function($){
           // Update players in  rooms
           $("#leaderboardList").empty()
           for (let element of IO.generateSortedLeaderboard(data)) {
-            $("#leaderboardList").append("<li>".concat(element[0]).concat(` (${element[1]})</li`))
+            $("#leaderboardList").append("<li>".concat(element[0]).concat(` - ${element[1]}</li`))
           }
 
         },
@@ -215,18 +234,29 @@ jQuery(function($){
 
         updateResultsPage: function(data) {
 
-          if (App.myRole === "Player") {
+          if (App.myRole === "Player" && data.showingResultsForCategoryN < data.categoriesPerRound) {
 
             $("#roundAnswersTable").empty()
             $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
             $("#roundResultsCategoryN").html(`Comparing Answers for Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
-
-            if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
-              $("#roundResultsButtonHolder").empty()
-              $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+            console.log(data.currentRound)
+            console.log(data.rounds)
+            if (data.currentRound < data.rounds - 1) {
+              if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
+                $("#roundResultsButtonHolder").empty()
+                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+              } else {
+                $("#roundResultsButtonHolder").empty()
+                $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
+              }
             } else {
-              $("#roundResultsButtonHolder").empty()
-              $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
+              if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
+                $("#roundResultsButtonHolder").empty()
+                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+              } else {
+                $("#roundResultsButtonHolder").empty()
+                $("#roundResultsButtonHolder").html("<button id='btnEndGame' value='word'>See Results!</button>")
+              }
             }
 
             // Populate current category.
@@ -241,6 +271,10 @@ jQuery(function($){
 
             // Populate my answers.
             let me = IO.findPlayerObject(data.players, App.Player.myName)
+            console.log("updateResultsPage")
+            console.log(me)
+            console.log(me.answers[data.currentRound])
+            console.log(data.showingResultsForCategoryN)
             $("#roundAnswersTable").append('<tr id="myAnswersRow"></tr>')
             $("#myAnswersRow").append("<td class='rowTitle'>My Answers</td>")
             $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
@@ -290,6 +324,10 @@ jQuery(function($){
             App.$doc.on('click', '#btnNextRound', function() {
               IO.onNextCategory();
               IO.onStartTimer();
+            });
+            App.$doc.on('click', '#btnEndGame', function() {
+              IO.onNextCategory();
+              IO.gameOver();
             })
             App.$doc.on('click', '#btnCreateGame', App.Host.onCreateClick);
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);
