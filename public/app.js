@@ -244,18 +244,18 @@ jQuery(function($){
             if (data.currentRound < data.rounds - 1) {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word'>Next Category</button>")
               } else {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextRound' value='word'>Start next round</button>")
               }
             } else {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word'>Next Category</button>")
               } else {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnEndGame' value='word'>See Results!</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnEndGame' value='word'>See Results!</button>")
               }
             }
 
@@ -416,7 +416,7 @@ jQuery(function($){
                       // Update categories
                       $("#categoryList").empty()
                       for (let j = 0; j < data.categoriesPerRound; j++) {
-                        $("#categoryList").append("<li></li>")
+                        $("#categoryList").append("<li class = 'catLst'></li>")
                       }
 
                       // Update answer sheets

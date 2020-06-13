@@ -209,11 +209,17 @@ font-family: 'Amatic SC', sans-serif;
       (alice--template)
    ****************************** */
 .catLst {
-  margin-bottom: 8px;
+  margin-bottom: 6.3px;
+  /*background-color: red;*/
 }
 
-.ansLst {
+/*.ansLst {
   background-color: #ffcc99;
+}*/
+
+.wideBtns{
+  text-align:center;
+  width: 100%;
 }
 
 /* ******************************
