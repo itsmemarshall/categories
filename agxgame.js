@@ -3,8 +3,8 @@ var gameSocket;
 
 // Game constants.
 var rounds = 3;
-var categoriesPerRound = 12;
-var roundTime = 180;
+var categoriesPerRound = 3;
+var roundTime = 5;
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
   categories[i] = new Array(categoriesPerRound)
@@ -65,7 +65,7 @@ exports.initGame = function(sio, socket){
             setTimeout(function() {sio.sockets.emit("updatedPlayerResponses", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound, rounds: rounds})}, 500);
           }
         } else if (gameState === "gameOver") {
-          io.sockets.emit("populateFinalLeaderboard", {players: players})
+          io.sockets.emit("populateFinalLeaderboard", {players: players, rounds: rounds})
           gameState = "finalLeaderboardShowing"
         }
 
@@ -115,8 +115,11 @@ function nextCategory(data) {
 
   io.sockets.emit("collectPlayerPoints")
 
-  showingResultsForCategoryN += 1
-  io.sockets.emit("updatedNextCategory", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound, rounds: rounds})
+  setTimeout(function() {
+    showingResultsForCategoryN += 1
+    io.sockets.emit("updatedNextCategory", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound, rounds: rounds, players: players})
+  }, 250)
+
 
 }
 

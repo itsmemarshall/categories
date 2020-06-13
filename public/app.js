@@ -64,11 +64,9 @@ jQuery(function($){
 
         gameOver: function () {
           if (App.myRole === "Player") {
-            console.log("gameover!")
 
             App.$gameArea.fadeOut(fadeSpeed, function() {
               $(this).html(App.$templateGameOver)
-              console.log("switched template")
               IO.socket.emit("gameOver");
             }).fadeIn(fadeSpeed);
 
@@ -77,11 +75,23 @@ jQuery(function($){
         },
 
         populateFinalLeaderboard: function(data) {
-          console.log("populating final leaderboard")
           // Update players in  rooms
 
+          $("#finalLeaderboard").append("<tr id='finalLeaderboardHeadings'></tr>")
+          $("#finalLeaderboardHeadings").append(`<td>Player</td>`)
+          for (let r = 0; r < data.rounds; r++) {
+            $("#finalLeaderboardHeadings").append(`<td>Round ${r+1}</td>`)
+          }
+          $("#finalLeaderboardHeadings").append(`<td>Total</td>`)
           for (let element of IO.generateSortedLeaderboard(data)) {
-            $("#finalLeaderboard").append("<li class = 'leaderLst'>".concat(element[0]).concat(` - ${element[1]}</li`))
+
+            $("#finalLeaderboard").append("<tr id='finalLeaderboard".concat(element[0]).concat("'></tr>"))
+            $("#finalLeaderboard".concat(element[0])).append("<td>".concat(element[0]).concat("</td"))
+            for (let r = 0; r < data.rounds; r++) {
+                $("#finalLeaderboard".concat(element[0])).append(`<td>${element[2][r]}</td>`)
+            }
+            $("#finalLeaderboard".concat(element[0])).append(`<td>${element[1]}</td>`)
+
           }
         },
 
@@ -116,23 +126,17 @@ jQuery(function($){
             $(`#answerSheet${data.currentRound}`).find("input").each(function() {
               playerAnswers.push($(this).val());
             })
-            console.log("justBeforeCollectedPlayerREsponses")
-            console.log(App.Player.myName)
-            console.log(playerAnswers)
             IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
           }
         },
 
         updatedPlayerResponses: function(data) {
           if (App.myRole === "Player") {
-            console.log("pre Fade Out" + App.Player.myName)
             currentPage = "roundResults"
-            console.log("in fade out, before new tempalte")
             App.$gameArea.fadeOut(fadeSpeed, function() {
               $(this).html(App.$templateRoundResults);
-              console.log("new template")
+              console.log("initial update page")
               IO.updateResultsPage(data);
-              console.log("updated page")
             }).fadeIn(fadeSpeed);
 
             //
@@ -199,7 +203,7 @@ jQuery(function($){
 
           // Update timer
           let remainingMinutes = Math.floor(data.remainingTime / 60);
-          let remainingSeconds = Math.ceil(data.remainingTime % 60).toString().padStart(2, "0");
+          let remainingSeconds = Math.floor(data.remainingTime % 60).toString().padStart(2, "0");
           $("#timeRemaining").html(`${remainingMinutes}:` + remainingSeconds);
 
           if (updateCategories) {
@@ -209,6 +213,14 @@ jQuery(function($){
               $("#categoryList").append("<li class = 'catLst'>".concat(data.categories[data.currentRound][j]).concat("</li>"))
             }
           }
+
+          // Update rounds
+          if (data.currentRound < 0) {
+            $("#roundHeader").html(`Get ready...`)
+          } else {
+            $("#roundHeader").html(`Round ${data.currentRound + 1}`)
+          }
+
 
           // Update letters
           $("#letter").html(data.currentLetter)
@@ -228,13 +240,13 @@ jQuery(function($){
           let pointsArray = []
           let playerArray = []
           for (let player of data.players) {
-            let totalPoints = player.points.flat().reduce((accumulator,currentValue)=>accumulator+currentValue)
+            let roundPoints = player.points.map(x => x.reduce((a, b) => a + b, 0))
+            let totalPoints = roundPoints.reduce((a, b) => a + b, 0)
             pointsArray.push(totalPoints)
-            playerArray.push([player.playerName, totalPoints])
+            playerArray.push([player.playerName, totalPoints, roundPoints])
           }
           let result = []
-          console.log(playerArray)
-          pointsArray.sort().reverse()
+          pointsArray.sort(function(a, b){return b-a})
           pointsArray.forEach(function(key) {
             var found = false;
             playerArray = playerArray.filter(function(item) {
@@ -256,8 +268,6 @@ jQuery(function($){
             $("#roundAnswersTable").empty()
             $("#currentRoundShower").html(`Round ${data.currentRound + 1} Results`)
             $("#roundResultsCategoryN").html(`Comparing Answers for Category ${data.showingResultsForCategoryN + 1} / ${data.categoriesPerRound}`)
-            console.log(data.currentRound)
-            console.log(data.rounds)
             if (data.currentRound < data.rounds - 1) {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
@@ -288,10 +298,7 @@ jQuery(function($){
 
             // Populate my answers.
             let me = IO.findPlayerObject(data.players, App.Player.myName)
-            console.log("updateResultsPage")
-            console.log(me)
-            console.log(me.answers[data.currentRound])
-            console.log(data.showingResultsForCategoryN)
+
             $("#roundAnswersTable").append('<tr id="myAnswersRow"></tr>')
             $("#myAnswersRow").append("<td class='rowTitle'>My Answers</td>")
             $("#myAnswersRow").append("<td>" + me.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
@@ -340,11 +347,16 @@ jQuery(function($){
             App.$doc.on('click', '#btnNextCategory', IO.onNextCategory);
             App.$doc.on('click', '#btnNextRound', function() {
               IO.onNextCategory();
-              IO.onStartTimer();
+              setTimeout(function() {
+                IO.onStartTimer();
+              }, 500);
             });
             App.$doc.on('click', '#btnEndGame', function() {
               IO.onNextCategory();
-              IO.gameOver();
+              setTimeout(function() {
+                  IO.gameOver();
+              }, 500);
+
             })
             App.$doc.on('click', '#btnCreateGame', App.Host.onCreateClick);
             App.$doc.on('click', '#btnJoinGame', App.Player.onJoinClick);

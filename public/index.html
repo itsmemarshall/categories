@@ -20,11 +20,11 @@
 
     <!-- Main Title Screen that appears when the page loads for the first time -->
     <script id="intro-screen-template" type="text/template">
-
+        <title>madhattergories</title>
         <div class="titleWrapper">
 
             <div class="title">
-                SCATTEGORIES (ALICE'S BIRTHDAY EDITION)
+                madhattergories
             </div>
 
             <div class="buttons">
@@ -39,7 +39,7 @@
     </script>
 
     <script id = "alice_template", type = "text/template">
-      <title>Main Game Page</title>
+      <title>madhattergories</title>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -106,7 +106,7 @@
               <div class="w3-col m12">
                 <div class="w3-card w3-round w3-white">
                   <div class="w3-container w3-padding">
-                    <h6 class="w3-opacity">Round totals</h6>
+                    <h6 class="w3-opacity" id="roundHeader"></h6>
                   </div>
                 </div>
               </div>
@@ -151,14 +151,14 @@
       <footer class="w3-container w3-theme-d3 w3-padding-16", style = "position: fixed; bottom:0; width: 100%; text-align: center">
         <h5>THANKS FOR PLAYING WITH US!</h5>
         <i class="fa fa-birthday-cake"></i>
-          remember to wish Alice a happy  27th birthday
+          remember to wish Alice a happy  27th birthday!
           <i class="fa fa-birthday-cake"></i>
     </footer>
 
     </script>
 
     <script id = "round-results-template", type = "text/template">
-      <title>Evaluation Page</title>
+      <title>madhattergories</title>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -180,7 +180,7 @@
       <div class="w3-top">
        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
         <a class="w3-bar-item w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
-        <a class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fa fa-birthday-cake"></i> SCATTEGORIES </a>
+          <a class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fa fa-birthday-cake"></i> MADHATTERGORIES </a>
         <a class="w3-bar-item w3-padding-large"><i class="fa fa-exclamation-circle"></i> Letter Chosen: </a>
         <a class="w3-bar-item" id = 'letter'></a>
         <a class="w3-bar-item w3-padding-large" id="currentRoundShower"></a>
@@ -268,7 +268,7 @@
       <footer class="w3-container w3-theme-d3 w3-padding-16" style = "position: fixed; bottom:0; width: 100%; text-align: center">
         <h5 >THANKS FOR PLAYING WITH US!</h5>
         <i class="fa fa-birthday-cake"></i>
-          remember to wish Alice a happy  27th birthday
+          remember to wish Alice a happy  27th birthday!
           <i class="fa fa-birthday-cake"></i>
     </footer>
 
@@ -323,9 +323,10 @@
 
     <!-- This screen appears when a user clicks "CREATE" on the Title Screen -->
     <script id="create-game-template" type="text/template">
+      <title>madhattergories</title>
         <div class="createGameWrapper">
 
-            <div class="info">Open this site on your mobile device:</div>
+            <div class="info">Open this site:</div>
             <div id="gameURL" class="infoBig">Error!</div>
 
             <div class="info">Then click <strong>JOIN</strong> and <br/> enter the following Game ID:</div>
@@ -337,6 +338,7 @@
 
     <!-- This screen appears when a player clicks "JOIN" on the Title Screen -->
     <script id="join-game-template" type="text/template">
+      <title>madhattergories</title>
         <div class="joinGameWrapper">
             <div class="info">
                 <label for="inputPlayerName">Your Name:</label>
@@ -354,7 +356,7 @@
 
     <!-- This screen appears when a player clicks "JOIN" on the Title Screen -->
     <script id="game-over-template" type="text/template">
-        <title>Game Over Page</title>
+        <title>madhattergories</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -398,7 +400,8 @@
                   <div class="w3-card w3-round w3-white">
                     <div class="w3-container w3-padding">
                       <h6 class="w3-opacity" id="finalResultsTitle"> And the winner is...</h6>
-                      <ol id ="finalLeaderboard" style = "padding-inline-start: 0px"></ol>
+                      <table id ="finalLeaderboard" style = "padding-inline-start: 0px">
+                      </table>
                     </div>
                   </div>
                 </div>
@@ -423,7 +426,7 @@
         <footer class="w3-container w3-theme-d3 w3-padding-16" style = "position: fixed; bottom:0; width: 100%; text-align: center">
           <h5 >THANKS FOR PLAYING WITH US!</h5>
           <i class="fa fa-birthday-cake"></i>
-            remember to wish Alice a happy  27th birthday
+            remember to wish Alice a happy  27th birthday!
             <i class="fa fa-birthday-cake"></i>
       </footer>
 
