@@ -81,7 +81,7 @@ jQuery(function($){
           // Update players in  rooms
 
           for (let element of IO.generateSortedLeaderboard(data)) {
-            $("#finalLeaderboard").append("<li>".concat(element[0]).concat(` - ${element[1]}</li`))
+            $("#finalLeaderboard").append("<li class = 'leaderLst'>".concat(element[0]).concat(` - ${element[1]}</li`))
           }
         },
 

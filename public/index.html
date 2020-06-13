@@ -354,11 +354,81 @@
 
     <!-- This screen appears when a player clicks "JOIN" on the Title Screen -->
     <script id="game-over-template" type="text/template">
-        <div id="finalResults">
-          <div id="finalResultsTitle">Final results!</div>
-          <ol id ="finalLeaderboard"></ol>
+        <title>Game Over Page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Amatic SC'>
+        <link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+        <!-- Ensure that everything scales appropriately on a mobile device -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+        <style>
+        html, body, h1, h2, h3, h4, h5, h6 {font-family: "Amatic SC", sans-serif; font-size: 125%}
+        </style>
+        <body class="w3-theme-l5">
+
+        <!-- Navbar -->
+        <div class="w3-top">
+         <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+          <a class="w3-bar-item w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+          <a class="w3-bar-item w3-padding-large w3-theme-d4"><i class="fa fa-birthday-cake"></i> SCATTEGORIES </a>
+          <a class="w3-bar-item w3-padding-large" id="currentRoundShower"></a>
+
+          <a class="w3-bar-item w3-right w3-padding-large"><i class="fa fa-user"></i>
+            <a class="w3-bar-item w3-right w3-padding-large" id = 'playerName'></a>
+          </a>
+         </div>
         </div>
-    </script>
+
+        <!-- Page Container -->
+        <div class="w3-container w3-content", style="max-width:1400px;margin-top:80px">
+          <!-- The Grid -->
+          <div class="w3-row">
+
+            <!-- Middle Column -->
+            <div class="w3-col">
+
+              <div class="w3-row-padding">
+                <div class="w3-col m12">
+                  <div class="w3-card w3-round w3-white">
+                    <div class="w3-container w3-padding">
+                      <h6 class="w3-opacity" id="finalResultsTitle"> And the winner is...</h6>
+                      <ol id ="finalLeaderboard" style = "padding-inline-start: 0px"></ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="w3-container w3-round w3-margin-top">
+                <table id="roundAnswersTable" class = "w3-table-all w3-card" style="width: 100%; text-align: center; margin:0px">
+                </table>
+
+              </div>
+          </div>
+          <!-- End Middle Column -->
+
+          <!-- End Grid -->
+          </div>
+
+        <!-- End Page Container -->
+        </div>
+        <br>
+
+        <footer class="w3-container w3-theme-d3 w3-padding-16" style = "position: fixed; bottom:0; width: 100%; text-align: center">
+          <h5 >THANKS FOR PLAYING WITH US!</h5>
+          <i class="fa fa-birthday-cake"></i>
+            remember to wish Alice a happy  27th birthday
+            <i class="fa fa-birthday-cake"></i>
+      </footer>
+
+      </script>
+
 
     <!-- JavaScript Libraries -->
 

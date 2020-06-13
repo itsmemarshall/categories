@@ -222,6 +222,16 @@ font-family: 'Amatic SC', sans-serif;
   width: 100%;
 }
 
+#finalLeaderboard {
+  text-align: center;
+  list-style-position: inside;
+}
+
+.leaderLst #finalResultsTitle {
+  text-align:center;
+
+}
+
 /* ******************************
            EVALUATION SCREEN
       (round-results--template)
