@@ -78,7 +78,7 @@ jQuery(function($){
               // Update categories
               $("#categoryList").empty()
               for (let j = 0; j < data.categoriesPerRound; j++) {
-                $("#categoryList").append("<li></li>")
+                $("#categoryList").append("<li class = 'catLst'></li>")
               }
 
               // Update answer sheets
@@ -189,7 +189,7 @@ jQuery(function($){
             // Update categories
             $("#categoryList").empty()
             for (let j = 0; j < data.categoriesPerRound; j++) {
-              $("#categoryList").append("<li>".concat(data.categories[data.currentRound][j]).concat("</li>"))
+              $("#categoryList").append("<li class = 'catLst'>".concat(data.categories[data.currentRound][j]).concat("</li>"))
             }
           }
 
@@ -423,7 +423,7 @@ jQuery(function($){
                       for (let round = 0; round < data.rounds; round++) {
                         $(`#answerSheet${round}`).empty()
                         for (let j = 0; j < data.categoriesPerRound; j++) {
-                          $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+                          $(`#answerSheet${round}`).append(`<li><input type="text" class = "ansLst" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
                         }
                       }
 

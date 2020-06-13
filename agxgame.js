@@ -2,9 +2,9 @@ var io;
 var gameSocket;
 
 // Game constants.
-var rounds = 1;
+var rounds = 3;
 var categoriesPerRound = 4;
-var roundTime = 5;
+var roundTime = 180;
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
   categories[i] = new Array(categoriesPerRound)

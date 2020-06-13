@@ -107,6 +107,7 @@ font-family: 'Amatic SC', sans-serif;
     width: 100%;
     color: #ff0066;
     font-weight: 300;
+    font-size: 6em;
 }
 
 .buttons {
@@ -124,8 +125,9 @@ font-family: 'Amatic SC', sans-serif;
     text-align: center;
     width: 75%;
     color: #ff0066;
-    font-weight: 700;
+    font-size:1.5em;
 }
+
 
 .joinGameWrapper {
     margin: 0 auto;
@@ -138,11 +140,6 @@ font-family: 'Amatic SC', sans-serif;
     font-weight: 400;
     font-size: 3em;
     margin-top: 1.5em;
-}
-
-.createGameWrapper{
-    color: #AE37B2;
-    font-weight: 300;
 }
 
 .info label {
@@ -204,12 +201,19 @@ font-family: 'Amatic SC', sans-serif;
     font-size: .8em;
 }
 
-.createGameWrapper #gameURL {
-    font-size: 1em;
+#gameURL, .gameId {
+    font-size: 5em;
+}
+/* ******************************
+           Main Home Page
+      (alice--template)
+   ****************************** */
+.catLst {
+  margin-bottom: 8px;
 }
 
-.createGameWrapper .gameId {
-    font-size: 8em;
+.ansLst {
+  background-color: #ffcc99;
 }
 
 /* ******************************
