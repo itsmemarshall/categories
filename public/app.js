@@ -81,7 +81,7 @@ jQuery(function($){
           // Update players in  rooms
 
           for (let element of IO.generateSortedLeaderboard(data)) {
-            $("#finalLeaderboard").append("<li>".concat(element[0]).concat(` - ${element[1]}</li`))
+            $("#finalLeaderboard").append("<li class = 'leaderLst'>".concat(element[0]).concat(` - ${element[1]}</li`))
           }
         },
 
@@ -94,7 +94,7 @@ jQuery(function($){
               // Update categories
               $("#categoryList").empty()
               for (let j = 0; j < data.categoriesPerRound; j++) {
-                $("#categoryList").append("<li></li>")
+                $("#categoryList").append("<li class = 'catLst'></li>")
               }
 
               // Update answer sheets
@@ -206,7 +206,7 @@ jQuery(function($){
             // Update categories
             $("#categoryList").empty()
             for (let j = 0; j < data.categoriesPerRound; j++) {
-              $("#categoryList").append("<li>".concat(data.categories[data.currentRound][j]).concat("</li>"))
+              $("#categoryList").append("<li class = 'catLst'>".concat(data.categories[data.currentRound][j]).concat("</li>"))
             }
           }
 
@@ -261,18 +261,18 @@ jQuery(function($){
             if (data.currentRound < data.rounds - 1) {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word'>Next Category</button>")
               } else {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextRound' value='word'>Start next round</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextRound' value='word'>Start next round</button>")
               }
             } else {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnNextCategory' value='word'>Next Category</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word'>Next Category</button>")
               } else {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button id='btnEndGame' value='word'>See Results!</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnEndGame' value='word'>See Results!</button>")
               }
             }
 
@@ -433,14 +433,14 @@ jQuery(function($){
                       // Update categories
                       $("#categoryList").empty()
                       for (let j = 0; j < data.categoriesPerRound; j++) {
-                        $("#categoryList").append("<li></li>")
+                        $("#categoryList").append("<li class = 'catLst'></li>")
                       }
 
                       // Update answer sheets
                       for (let round = 0; round < data.rounds; round++) {
                         $(`#answerSheet${round}`).empty()
                         for (let j = 0; j < data.categoriesPerRound; j++) {
-                          $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
+                          $(`#answerSheet${round}`).append(`<li><input type="text" class = "ansLst" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
                         }
                       }
 
