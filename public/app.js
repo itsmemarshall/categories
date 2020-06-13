@@ -63,35 +63,32 @@ jQuery(function($){
         },
 
         gameOver: function () {
-          if (App.myRole === "Player") {
 
-            App.$gameArea.fadeOut(fadeSpeed, function() {
-              $(this).html(App.$templateGameOver)
-              IO.socket.emit("gameOver");
-            }).fadeIn(fadeSpeed);
-
-
-          }
         },
 
         populateFinalLeaderboard: function(data) {
           // Update players in  rooms
+          if (App.myRole === "Player") {
 
-          $("#finalLeaderboard").append("<tr id='finalLeaderboardHeadings'></tr>")
-          $("#finalLeaderboardHeadings").append(`<td>Player</td>`)
-          for (let r = 0; r < data.rounds; r++) {
-            $("#finalLeaderboardHeadings").append(`<td>Round ${r+1}</td>`)
-          }
-          $("#finalLeaderboardHeadings").append(`<td>Total</td>`)
-          for (let element of IO.generateSortedLeaderboard(data)) {
+            App.$gameArea.fadeOut(fadeSpeed, function() {
+              $(this).html(App.$templateGameOver)
+              $("#finalLeaderboard").append("<tr id='finalLeaderboardHeadings'></tr>")
+              $("#finalLeaderboardHeadings").append(`<td>Player</td>`)
+              for (let r = 0; r < data.rounds; r++) {
+                $("#finalLeaderboardHeadings").append(`<td>Round ${r+1}</td>`)
+              }
+              $("#finalLeaderboardHeadings").append(`<td>Total</td>`)
+              for (let element of IO.generateSortedLeaderboard(data)) {
 
-            $("#finalLeaderboard").append("<tr id='finalLeaderboard".concat(element[0]).concat("'></tr>"))
-            $("#finalLeaderboard".concat(element[0])).append("<td>".concat(element[0]).concat("</td"))
-            for (let r = 0; r < data.rounds; r++) {
-                $("#finalLeaderboard".concat(element[0])).append(`<td>${element[2][r]}</td>`)
-            }
-            $("#finalLeaderboard".concat(element[0])).append(`<td>${element[1]}</td>`)
+                $("#finalLeaderboard").append("<tr id='finalLeaderboard".concat(element[0]).concat("'></tr>"))
+                $("#finalLeaderboard".concat(element[0])).append("<td>".concat(element[0]).concat("</td"))
+                for (let r = 0; r < data.rounds; r++) {
+                    $("#finalLeaderboard".concat(element[0])).append(`<td>${element[2][r]}</td>`)
+                }
+                $("#finalLeaderboard".concat(element[0])).append(`<td>${element[1]}</td>`)
 
+              }
+            }).fadeIn(fadeSpeed);
           }
         },
 
@@ -177,6 +174,16 @@ jQuery(function($){
                   if(this.hasAttribute("disabled")) {this.removeAttribute("disabled");}
                 })
               } else { $(`#answerSheet${round}`).find("input").attr("disabled", "disabled")}
+            }
+
+            // Fill in previous round answers.
+            let me = IO.findPlayerObject(data.players, App.Player.myName)
+            for (let round = 0; round < data.rounds; round++) {
+              if (round < data.currentRound) {
+                for (let j = 0; j < data.categoriesPerRound; j++) {
+                    $(`#answerRound${round}Category${j}`).val(me.answers[round][j])
+                }
+              }
             }
 
           //
@@ -379,8 +386,8 @@ jQuery(function($){
             App.$doc.on('click', '#btnEndGame', function() {
               IO.onNextCategory();
               setTimeout(function() {
-                  IO.gameOver();
-              }, 500);
+                  IO.socket.emit("gameOver");
+                }, 500);
 
             })
             App.$doc.on('click', '#btnCreateGame', App.Host.onCreateClick);
