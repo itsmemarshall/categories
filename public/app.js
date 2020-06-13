@@ -45,6 +45,7 @@ jQuery(function($){
 
         onStartTimer: function() {
           IO.socket.emit('startTimer');
+          setTimeout(function() {$(`#answerRound0Category0`).focus();}, 250);
         },
 
         onNextCategory: function() {
@@ -111,8 +112,12 @@ jQuery(function($){
                   $(`#answerSheet${round}`).append(`<li><input type="text" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
                 }
               }
+              console.log("pre-focusing!")
+              setTimeout(function() {
+                console.log("focusing")
+                $(`#answerRound${data.currentRound}Category0`).focus();
+              }, 250)
             }).fadeIn(fadeSpeed);
-
           }
 
         },
@@ -328,6 +333,7 @@ jQuery(function($){
             $("#pointInputsRow").append("<td class='rowTitle'>My Points</td>")
             $("#pointInputsRow").append("<td><input class='pointInput' id='myPointsInput'></input>")
 
+
             // Populate my answers.
             let me = IO.findPlayerObject(data.players, App.Player.myName)
 
@@ -341,6 +347,8 @@ jQuery(function($){
               $("#" + player.playerName + "AnswersRow").append("<td class='rowTitle'>" + player.playerName + "</td>")
               $("#" + player.playerName + "AnswersRow").append("<td>" + player.answers[data.currentRound][data.showingResultsForCategoryN] + "</td>")
             }
+            console.log("trying to focus")
+            setTimeout(function() {$(`#myPointsInput`).focus();}, 250);
           }
         },
 
@@ -449,7 +457,10 @@ jQuery(function($){
             myName: '',
             inGame: false,
             onJoinClick: function () {
-                App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateJoinGame)}).fadeIn(fadeSpeed);
+                App.$gameArea.fadeOut(fadeSpeed, function() {
+                  $(this).html(App.$templateJoinGame);
+                  setTimeout(function() {$("#inputPlayerName").focus();}, 100)
+                }).fadeIn(fadeSpeed);
             },
 
             onPlayerStartClick: function() {
@@ -487,8 +498,8 @@ jQuery(function($){
                           $(`#answerSheet${round}`).append(`<li><input type="text" class = "ansLst" id="answerRound${round}Category${j}" disabled="disabled"></input></li>`)
                         }
                       }
-
                     }).fadeIn(fadeSpeed);
+
                 }
             },
         },
