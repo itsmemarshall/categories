@@ -62,8 +62,11 @@ exports.initGame = function(sio, socket){
               players: players,
               categoriesPerRound: categoriesPerRound
             })
-            setTimeout(function() {sio.sockets.emit("updatedPlayerResponses", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound})}, 500);
+            setTimeout(function() {sio.sockets.emit("updatedPlayerResponses", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound, rounds: rounds})}, 500);
           }
+        } else if (gameState === "gameOver") {
+          io.sockets.emit("populateFinalLeaderboard", {players: players})
+          gameState = "finalLeaderboardShowing"
         }
 
         // Update clients with latest game state.
@@ -487,7 +490,6 @@ var categoryList = [
   'Sticky things',
   'Awards',
   'Types of vehicles',
-  'Herbs',
   'Cosmetics',
   'Utensils for cooking',
   'Bad habits',
