@@ -27,6 +27,7 @@ jQuery(function($){
             IO.socket.on('updatedNextCategory', IO.updateResultsPage)
             IO.socket.on('collectPlayerPoints', IO.collectPlayerPoints)
             IO.socket.on("updatedPlayerResponses", IO.updatedPlayerResponses)
+            IO.socket.on("populateFinalLeaderboard", IO.populateFinalLeaderboard)
         },
 
         onConnected : function() {
@@ -64,8 +65,23 @@ jQuery(function($){
         gameOver: function () {
           if (App.myRole === "Player") {
             console.log("gameover!")
-            IO.socket.emit("gameOver")
-            App.$gameArea.fadeOut(fadeSpeed, function() {$(this).html(App.$templateGameOver)}).fadeIn(fadeSpeed);
+
+            App.$gameArea.fadeOut(fadeSpeed, function() {
+              $(this).html(App.$templateGameOver)
+              console.log("switched template")
+              IO.socket.emit("gameOver");
+            }).fadeIn(fadeSpeed);
+
+
+          }
+        },
+
+        populateFinalLeaderboard: function(data) {
+          console.log("populating final leaderboard")
+          // Update players in  rooms
+
+          for (let element of IO.generateSortedLeaderboard(data)) {
+            $("#finalLeaderboard").append("<li>".concat(element[0]).concat(` - ${element[1]}</li`))
           }
         },
 
@@ -102,6 +118,7 @@ jQuery(function($){
             })
             console.log("justBeforeCollectedPlayerREsponses")
             console.log(App.Player.myName)
+            console.log(playerAnswers)
             IO.socket.emit('collectedPlayerResponses', {playerAnswers: playerAnswers, playerName: App.Player.myName, currentRound: data.currentRound})
           }
         },
@@ -314,7 +331,7 @@ jQuery(function($){
             App.$templateJoinGame = $('#join-game-template').html();
             App.$templateMainGame = $('#alice_template').html();
             App.$templateRoundResults = $('#round-results-template').html();
-            App.templateGameOver = $('#game-over-template').html();
+            App.$templateGameOver = $('#game-over-template').html();
 
         },
 
@@ -334,7 +351,7 @@ jQuery(function($){
             App.$doc.on('click', '#btnStart',App.Player.onPlayerStartClick);
             App.$doc.keyup(function(event) {
               if (event.keyCode == 13) {
-                $("btnStart").click();
+                $("#btnStart").click();
               }
             })
 
