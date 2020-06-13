@@ -44,6 +44,7 @@ exports.initGame = function(sio, socket){
     gameSocket.on('collectedPlayerResponses', collectedPlayerResponses)
     gameSocket.on('collectedPlayerPoints', collectedPlayerPoints)
     gameSocket.on('gameOver', gameOver)
+    gameSocket.on("updateRoundResultsStatus", updateRoundResultsStatus)
 
     // Update loop
     if (!frequentUpdateTimer) {
@@ -95,6 +96,7 @@ function startTimer() {
   currentRound += 1
   showingResultsForCategoryN = 0
 
+
   // Generate categories
   let n_categories = categoryList.length
   let indices = shuffle([...Array(n_categories).keys()])
@@ -117,6 +119,10 @@ function nextCategory(data) {
 
   setTimeout(function() {
     showingResultsForCategoryN += 1
+    for (player of players) {
+      player.answerEntered = false
+    }
+    console.log("players non-answered")
     io.sockets.emit("updatedNextCategory", {currentRound: currentRound, categories: categories, showingResultsForCategoryN: showingResultsForCategoryN, players: players, categoriesPerRound: categoriesPerRound, rounds: rounds, players: players})
   }, 250)
 
@@ -126,6 +132,11 @@ function nextCategory(data) {
 function collectedPlayerPoints(data) {
   let player = players.filter(obj => {return obj.playerName == data.playerName})[0]
   player.points[currentRound][showingResultsForCategoryN] = data.myPoints
+}
+
+function updateRoundResultsStatus(data) {
+  let player = players.filter(obj => {return obj.playerName == data.playerName})[0]
+  player.answerEntered = data.answerEntered
 }
 
 function hostCreateNewGame() {
@@ -186,6 +197,8 @@ function playerJoinGame(data) {
           }
         }
 
+        data.answerEntered = false
+
         players.push(data)
 
         // Emit an event notifying the clients that the player has joined the room.
@@ -229,7 +242,6 @@ function shuffle(array) {
 }
 
 var categoryList = [
-  'A boy’s name',
   'A river',
   'An animal',
   'Things that are cold',
@@ -250,13 +262,11 @@ var categoryList = [
   'Things that are square',
   'Things in Alaska',
   'Clothing',
-  'A relative',
   'Games',
   'Sports Stars',
   'School supplies',
   'Things that are hot',
   'Heroes',
-  'A girl’s name',
   'Fears',
   'TV Stars',
   'Colors',
@@ -274,7 +284,6 @@ var categoryList = [
   'Cities',
   'Things in the kitchen',
   'Ocean things',
-  'Nicknames',
   'Hobbies',
   'Parts of the body',
   'Sandwiches',
@@ -307,7 +316,7 @@ var categoryList = [
   'Capitals',
   'Kinds of candy',
   'Items you save up to buy',
-  'Footware',
+  'Footwear',
   'Something you keep hidden',
   'Items in a suitcase',
   'Things with tails',
@@ -343,7 +352,6 @@ var categoryList = [
   'Global foods',
   'Things you shout',
   'Birds',
-  'A girl’s name',
   'Ways to get somewhere',
   'Items in a kitchen',
   'Villains',
@@ -390,7 +398,6 @@ var categoryList = [
   'Tourist attractions',
   'Diet foods',
   'Things found in a hospital',
-  'Food/Drink that is green',
   'Weekend Activities',
   'Acronyms',
   'Seafood',
@@ -406,7 +413,6 @@ var categoryList = [
   'Olympic events',
   'Things you see at the zoo',
   'Math terms',
-  'Animals in books or movies',
   'Things to do at a party',
   'Kinds of soup',
   'Things found in New York',
@@ -474,17 +480,13 @@ var categoryList = [
   'Items in a dresser drawer',
   'Ways to relax',
   'Things found in the sky',
-  'Figures from history',
   'Types of drugs',
   'Types of bread',
   'Fictional characters',
   'Items on a lunch menu',
   'Magazines',
-  'State capitals',
   'Things with tails',
   'Crimes',
-  'Vanilla items',
-  'Types of popcorn',
   'Large ticket items',
   "Items in Grandma's kitchen",
   'Dog toys',
@@ -509,8 +511,6 @@ var categoryList = [
   'Trees',
   'Marching band instruments',
   'College subjects',
-  'Dishes made from pasta',
-  'Books about animals',
   'Insects',
   'Types of sports',
   'Poems',

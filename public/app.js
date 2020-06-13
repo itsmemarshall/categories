@@ -48,7 +48,7 @@ jQuery(function($){
         },
 
         onNextCategory: function() {
-
+          console.log("sever-side onNextCategory")
           IO.socket.emit("nextCategoryButtonClicked")
 
         },
@@ -187,6 +187,30 @@ jQuery(function($){
 
             IO.updateInRoundElements(data, false)
 
+            // Prevent next round until everyone typed something.
+            if (App.myRole === "Player") {
+              if (!isNaN(parseInt($("#myPointsInput").val()))) {
+                IO.socket.emit("updateRoundResultsStatus", {answerEntered: true, playerName: App.Player.myName})
+              } else {
+                IO.socket.emit("updateRoundResultsStatus", {answerEntered: false, playerName: App.Player.myName})
+              }
+            }
+
+            if (data.players.map(player => player.answerEntered).every(x => x)) {
+              if ($("#btnNextCategory").prop("disabled")) {
+                  $('#btnNextCategory').prop('disabled', false);
+                  $('#btnNextCategory').html("Next Category");
+              }
+              if ($("#btnNextRound").prop("disabled")) {
+                  $('#btnNextRound').prop('disabled', false);
+                  $('#btnNextRound').html("Next Round");
+              }
+              if ($("#btnEndGame").prop("disabled")) {
+                  $('#btnEndGame').prop('disabled', false);
+                  $('#btnEndGame').html("See results!");
+              }
+            }
+
           } else if (data.gameState === "gameOver") {
 
             console.log("gameOver")
@@ -262,6 +286,7 @@ jQuery(function($){
         },
 
         updateResultsPage: function(data) {
+          console.log("updating results page")
 
           if (App.myRole === "Player" && data.showingResultsForCategoryN < data.categoriesPerRound) {
 
@@ -271,18 +296,18 @@ jQuery(function($){
             if (data.currentRound < data.rounds - 1) {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word'>Next Category</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word' disabled='disabled'>Waiting...</button>")
               } else {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextRound' value='word'>Start next round</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextRound' value='word' disabled='disabled'>Waiting...</button>")
               }
             } else {
               if (data.showingResultsForCategoryN < data.categoriesPerRound - 1) {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word'>Next Category</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnNextCategory' value='word' disabled='disabled'>Waiting...</button>")
               } else {
                 $("#roundResultsButtonHolder").empty()
-                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnEndGame' value='word'>See Results!</button>")
+                $("#roundResultsButtonHolder").html("<button class = 'wideBtns' id='btnEndGame' value='word' disabled='disabled'>Waiting...</button>")
               }
             }
 
