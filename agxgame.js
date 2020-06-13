@@ -2,9 +2,9 @@ var io;
 var gameSocket;
 
 // Game constants.
-var rounds = 1;
-var categoriesPerRound = 4;
-var roundTime = 5;
+var rounds = 3;
+var categoriesPerRound = 12;
+var roundTime = 180;
 var categories = new Array(rounds)
 for (i = 0; i < rounds; i++) {
   categories[i] = new Array(categoriesPerRound)
@@ -245,7 +245,7 @@ var categoryList = [
   'Cartoon characters',
   'Holidays',
   'Things that are square',
-  'In the NWT (Northwest Territories, Canada)',
+  'Things in Alaska',
   'Clothing',
   'A relative',
   'Games',
@@ -321,7 +321,7 @@ var categoryList = [
   'Reptiles',
   'Parks',
   'Leisure activities',
-  'Things people are allergic to',
+  'Allergies',
   'Restaurants',
   'Notorious people',
   'Fruits',
@@ -333,7 +333,7 @@ var categoryList = [
   'Halloween costumes',
   'Weapons',
   'Things that are round',
-  'Words associated with exercise',
+  'Exercise-related words',
   'Sports',
   'Song titles',
   'Parts of the body',
@@ -341,7 +341,7 @@ var categoryList = [
   'Things you shout',
   'Birds',
   'A girl’s name',
-  'Ways to get from here to there',
+  'Ways to get somewhere',
   'Items in a kitchen',
   'Villains',
   'Flowers',
@@ -451,7 +451,6 @@ var categoryList = [
   'Perfumes',
   'Types of candy',
   'Accessories',
-  'Things used by the handicapped',
   'Sounds animals make',
   'Things that are hot',
   'Breakfast foods',
@@ -497,7 +496,7 @@ var categoryList = [
   'Reptiles',
   'Leisure activities',
   'Monthly expenses',
-  'Things found at a construction site',
+  'Things on a construction site',
   "Old-fashioned boy's name",
   'Items that are frozen',
   'Television shows from 2000',
