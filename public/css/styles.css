@@ -255,6 +255,12 @@ th {
   border: 2px solid #ffcc99;
 }
 
+#playerName {
+  padding-top: 12px;
+  padding-right: 0px;
+  padding-bottom: 12px;
+  padding-left: 0px;
+}
 .rowTitle {
   color: #ff0066;
   font-size: 110%;

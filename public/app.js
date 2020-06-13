@@ -210,6 +210,14 @@ jQuery(function($){
             }
           }
 
+          // Update header round number
+          if (data.currentRound < 0) {
+            $("#headerRoundNum").html(`Get ready for some fun!`)
+          } else {
+            $("#headerRoundNum").html(`Now Playing Round ${data.currentRound + 1}`)
+          }
+
+
           // Update letters
           $("#letter").html(data.currentLetter)
 
