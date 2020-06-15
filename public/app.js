@@ -226,6 +226,13 @@ jQuery(function($){
           } else if (data.gameState === "gameOver") {
 
             console.log("gameOver")
+            // Update playerName
+            $("#playerName").html(App.Player.myName)
+
+          } else if (data.gameState === "finalLeaderboardShowing") {
+
+            // Update playerName
+            $("#playerName").html(App.Player.myName)
 
           } else {
 

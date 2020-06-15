@@ -1,9 +1,13 @@
 to-dos
 
-spacing of username to icon
-header font bigger?
-footer smaller
-only let click next category once everyone is in
-fill in previous answers
+disable start timer button after starting round
 
-two tables for gameover, other person does't update lol
+get rid of footer
+
+please
+
+auto put in zero
+if same or if no answer
+to-dos
+show per round points
+random picture generator
